@@ -2,12 +2,57 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "type": "shell",
             "label": "Build",
+            "dependsOn": [
+                "Compose Up",
+                "Run Migrations",
+                "Build Solution"
+            ],
+        },
+        {
+            "label": "Compose Up",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "compose",
+                "-f",
+                "${workspaceFolder}/compose.dev.yaml",
+                "up",
+                "-d",
+                "--no-recreate"
+            ],
+        },
+        {
+            "label": "Compose Down",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "compose",
+                "-f",
+                "${workspaceFolder}/compose.dev.yaml",
+                "down"
+            ],
+        },
+        {
+            "label": "Build Solution",
+            "type": "shell",
             "command": "dotnet",
             "args": [
                 "build"
-            ]
+            ],
+        },
+        {
+            "label": "Run Migrations",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "ef",
+                "database",
+                "update",
+                "--project",
+                "${workspaceFolder}/MusicApi/MusicApi.csproj"
+            ],
+            "dependsOn": "Compose Up"
         }
     ]
 }

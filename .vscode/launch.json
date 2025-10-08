@@ -11,6 +11,7 @@
             "program": "${workspaceFolder}/MusicApi/bin/Debug/net9.0/MusicApi.dll",
             "launchSettingsFilePath": "${workspaceFolder}/MusicApi/Properties/launchSettings.json",
             "preLaunchTask": "Build",
+            "postDebugTask": "Compose Down",
             "cwd": "${workspaceFolder}/MusicApi",
             "logging": {
                 "moduleLoad": false,
