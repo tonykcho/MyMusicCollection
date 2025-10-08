@@ -7,3 +7,8 @@ services:
       POSTGRES_DB: MyMusicCollection
     ports:
       - "5432:5432"
+    volumes:
+      - music_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  music_postgres_data:
