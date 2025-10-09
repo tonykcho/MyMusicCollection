@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MusicApi.Abstracts;
 using MusicApi.Handlers;
+using MusicApi.Models;
 
 namespace MusicApi.Endpoints;
 
@@ -12,11 +13,16 @@ public static class MapMusicEndpoints
         var musicGroup = app.MapGroup("/api/music")
             .WithTags("Music API");
 
-        musicGroup.MapGet("/", () => "Welcome to the Music API!")
-            .WithName("Welcome")
-            .WithSummary("Welcome message for the Music API")
-            .WithDescription("Returns a welcome message to confirm that the Music API is running.")
-            .Produces<string>(StatusCodes.Status200OK);
+        musicGroup.MapGet("/", (ApiRequestPipeline apiRequestPipeline) =>
+        {
+            var result = apiRequestPipeline.RunPipeLineAsync(new GetMusicsRequest(), new CancellationToken()).Result;
+
+            return result.MapToResult();
+        })
+        .WithName("GetMusics")
+        .WithSummary("Retrieve all music entries")
+        .WithDescription("Retrieves a list of all music entries in the collection.")
+        .Produces<List<Music>>(StatusCodes.Status200OK);
 
         musicGroup.MapPost("/", async ([FromBody] CreateMusicRequest request, ApiRequestPipeline apiRequestPipeline) =>
         {

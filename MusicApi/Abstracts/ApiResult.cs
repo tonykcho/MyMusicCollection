@@ -2,11 +2,18 @@ namespace MusicApi.Abstracts
 {
     public interface IApiResult
     {
+        virtual object GetData() => null!;
     }
 
-    public interface IApiResult<T> : IApiResult
+    public sealed class ContentApiResult<T> : IApiResult
     {
-        T Data { get; set; }
+        public T Data { get; set; }
+
+        public ContentApiResult(T data)
+        {
+            Data = data;
+        }
+        public object GetData() => Data!;
     }
 
     public sealed class NoContentApiResult : IApiResult

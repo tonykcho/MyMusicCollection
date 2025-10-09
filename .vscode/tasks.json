@@ -39,7 +39,7 @@
             "command": "dotnet",
             "args": [
                 "build"
-            ],
+            ]
         },
         {
             "label": "Run Migrations",
@@ -52,7 +52,10 @@
                 "--project",
                 "${workspaceFolder}/MusicApi/MusicApi.csproj"
             ],
-            "dependsOn": "Compose Up"
+            "dependsOn": [
+                "Compose Up",
+                "Build Solution"
+            ],
         }
     ]
 }
