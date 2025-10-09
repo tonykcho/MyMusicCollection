@@ -1,6 +1,15 @@
+### Get Music
 @MusicApi_HostAddress = http://localhost:5191
 
-GET {{MusicApi_HostAddress}}/weatherforecast/
+GET {{MusicApi_HostAddress}}/api/music
 Accept: application/json
 
-###
+### Create Music
+POST {{MusicApi_HostAddress}}/api/music
+Content-Type: application/json
+
+{
+    "Title": "Memory2",
+    "Artist": "Love",
+    "ReleaseDate": "2023-10-01T00:00:00Z"
+}
