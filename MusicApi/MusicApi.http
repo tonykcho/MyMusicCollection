@@ -23,3 +23,7 @@ Content-Type: application/json
     "Artist": "Band",
     "ReleaseDate": "2023-10-01T00:00:00Z"
 }
+
+### Get Albums
+GET {{MusicApi_HostAddress}}/api/albums
+Accept: application/json

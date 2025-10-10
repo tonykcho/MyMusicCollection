@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MusicApi.Abstracts;
 using MusicApi.DbContexts;
+using MusicApi.Dtos;
+using MusicApi.Mappers;
 using MusicApi.Models;
 
 namespace MusicApi.Handlers;
@@ -23,7 +25,9 @@ public class GetMusicsHandler : IApiRequestHandler<GetMusicsRequest>
         var musics = await _dbContext.Musics
             .ToListAsync();
 
-        var result = new ContentApiResult<List<Music>>(musics);
+        var musicDtos = musics.Select(MusicMapper.MapToDto).ToList();
+
+        var result = new ContentApiResult<List<MusicDto>>(musicDtos);
 
         return result;
     }
