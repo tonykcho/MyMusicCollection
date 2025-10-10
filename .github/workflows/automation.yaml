@@ -1,0 +1,33 @@
+name: automation
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: pwd
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "9.0.x"
+      - name: Install dependencies
+        run: dotnet restore MusicApi/MusicApi.csproj
+      - name: Build
+        run: dotnet build --no-restore MusicApi/MusicApi.csproj --configuration Release --verbosity minimal
+      # - name: Test
+      #   run: dotnet test --no-build --verbosity normal MusicApi.Tests/MusicApi.Tests.csproj
