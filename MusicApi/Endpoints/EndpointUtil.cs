@@ -15,15 +15,11 @@ public static class EndpointUtil
                 : Results.NoContent();
         }
 
-        if (result is ValidationErrorApiResult validationErrorResult)
-        {
-            return Results.ValidationProblem(validationErrorResult.Data);
-        }
-
         return result switch
         {
+            ValidationErrorApiResult validationErrorApiResult => Results.ValidationProblem(validationErrorApiResult.Data),
             NoContentApiResult => Results.NoContent(),
-            BadRequestApiResult => Results.BadRequest(),
+            BadRequestApiResult badRequestApiResult => Results.BadRequest(badRequestApiResult.Message),
             NotFoundApiResult => Results.NotFound(),
             TaskCancelledApiResult => Results.StatusCode(StatusCodes.Status499ClientClosedRequest),
             _ => Results.StatusCode(StatusCodes.Status500InternalServerError)

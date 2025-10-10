@@ -33,6 +33,11 @@ namespace MusicApi.Abstracts
 
     public sealed class BadRequestApiResult : IApiResult
     {
+        public string Message { get; set; } = string.Empty;
+        public BadRequestApiResult(string message)
+        {
+            Message = message;
+        }
     }
 
     public sealed class NotFoundApiResult : IApiResult

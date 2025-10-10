@@ -28,7 +28,7 @@ public class ApiRequestPipeline(IServiceProvider serviceProvider)
 
         if (request is null)
         {
-            return new BadRequestApiResult();
+            return new BadRequestApiResult("Request body is null.");
         }
 
         var handler = serviceProvider.GetRequiredService<IApiRequestHandler<TRequest>>();
