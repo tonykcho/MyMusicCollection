@@ -15,6 +15,11 @@ public static class EndpointUtil
                 : Results.NoContent();
         }
 
+        if (result is ValidationErrorApiResult validationErrorResult)
+        {
+            return Results.ValidationProblem(validationErrorResult.Data);
+        }
+
         return result switch
         {
             NoContentApiResult => Results.NoContent(),

@@ -16,6 +16,17 @@ namespace MusicApi.Abstracts
         public object GetData() => Data!;
     }
 
+    public sealed class ValidationErrorApiResult : IApiResult
+    {
+        public IDictionary<string, string[]> Data { get; set; }
+
+        public ValidationErrorApiResult(IDictionary<string, string[]> data)
+        {
+            Data = data;
+        }
+        public object GetData() => Data!;
+    }
+
     public sealed class NoContentApiResult : IApiResult
     {
     }

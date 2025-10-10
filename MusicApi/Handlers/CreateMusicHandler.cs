@@ -6,8 +6,8 @@ namespace MusicApi.Handlers;
 
 public class CreateMusicRequest : IApiRequest
 {
-    public required string Title { get; set; }
-    public required string Artist { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Artist { get; set; } = string.Empty;
     public DateTimeOffset ReleaseDate { get; set; }
 }
 

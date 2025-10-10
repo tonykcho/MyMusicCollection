@@ -1,4 +1,6 @@
 using System.Reflection;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using MusicApi.Abstracts;
 using MusicApi.DbContexts;
 using MusicApi.Endpoints;
@@ -20,9 +22,16 @@ foreach (var type in Assembly.Load(typeof(Program).Assembly.GetName()).GetTypes(
     }
 }
 
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
+builder.Services.AddValidatorsFromAssembly(Assembly.Load(typeof(Program).Assembly.GetName()));
+
 var app = builder.Build();
 
 app.MapMusicApiEndpoints();
+app.MapAlbumApiEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

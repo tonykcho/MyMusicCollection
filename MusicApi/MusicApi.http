@@ -13,3 +13,13 @@ Content-Type: application/json
     "Artist": "Love",
     "ReleaseDate": "2023-10-01T00:00:00Z"
 }
+
+### Create Album
+Post {{MusicApi_HostAddress}}/api/albums
+Content-Type: application/json
+
+{
+    "Title": "Album1",
+    "Artist": "Band",
+    "ReleaseDate": "2023-10-01T00:00:00Z"
+}
