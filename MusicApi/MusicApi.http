@@ -19,7 +19,7 @@ Post {{MusicApi_HostAddress}}/api/albums
 Content-Type: application/json
 
 {
-    "Title": "Album1",
+    "Title": "Album6",
     "Artist": "Band",
     "ReleaseDate": "2023-10-01T00:00:00Z"
 }

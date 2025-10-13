@@ -8,7 +8,8 @@ builder
     .AddLogging()
     .AddServices()
     .AddRequestHandlers()
-    .AddValidators();
+    .AddValidators()
+    .AddCors();
 
 var app = builder.Build();
 
@@ -21,5 +22,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 
 app.Run();

@@ -9,6 +9,7 @@ public class AlbumMapper
     {
         return new AlbumDto
         {
+            Id = album.Id,
             Title = album.Title,
             Artist = album.Artist,
             ReleaseDate = album.ReleaseDate,
