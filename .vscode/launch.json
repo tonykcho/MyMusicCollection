@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch WebAPI",
+            "name": "Launch MusicAPI",
             "type": "coreclr",
             "request": "launch",
             "program": "${workspaceFolder}/MusicApi/bin/Debug/net9.0/MusicApi.dll",
@@ -16,6 +16,17 @@
             "logging": {
                 "moduleLoad": false,
             }
+        },
+        {
+            "name": "Launch MusicUI",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/music-ui",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "dev"
+            ],
         }
     ]
 }
