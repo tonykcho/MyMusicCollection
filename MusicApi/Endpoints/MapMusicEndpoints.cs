@@ -29,6 +29,7 @@ public static class MapMusicEndpoints
 
             return result.MapToResult();
         })
+        .DisableAntiforgery()
         .WithName("CreateMusic")
         .WithSummary("Create a new music entry")
         .WithDescription("Creates a new music entry in the collection.")

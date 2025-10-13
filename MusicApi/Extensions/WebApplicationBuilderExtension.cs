@@ -3,6 +3,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using MusicApi.Abstracts;
 using MusicApi.DbContexts;
+using MusicApi.Services;
 using Serilog;
 
 namespace MusicApi.Extensions;
@@ -56,6 +57,7 @@ public static class WebApplicationBuilderExtension
     public static WebApplicationBuilder AddServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<ApiRequestPipeline>();
+        builder.Services.AddSingleton<ImageStorageService>();
         builder.Services.AddDbContext<AppDbContext>();
 
         return builder;

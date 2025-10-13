@@ -3,7 +3,6 @@ using MusicApi.Abstracts;
 using MusicApi.DbContexts;
 using MusicApi.Dtos;
 using MusicApi.Mappers;
-using MusicApi.Models;
 
 namespace MusicApi.Handlers;
 

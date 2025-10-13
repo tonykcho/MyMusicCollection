@@ -35,6 +35,7 @@ msbuild.wrn
 
 # Custom Ignore
 logs/
+uploads/
 images/
 MyNet6Demo.Api/firebase_credential.json
 firebase_credential.json

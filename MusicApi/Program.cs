@@ -3,6 +3,7 @@ using MusicApi.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+builder.Services.AddAntiforgery();
 
 builder
     .AddLogging()
@@ -23,5 +24,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors();
+app.UseAntiforgery();
 
 app.Run();

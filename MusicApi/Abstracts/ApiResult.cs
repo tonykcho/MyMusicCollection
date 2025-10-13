@@ -27,6 +27,18 @@ namespace MusicApi.Abstracts
         public object GetData() => Data!;
     }
 
+    public sealed class FileApiResult : IApiResult
+    {
+        public byte[] FileData { get; set; }
+        public string ContentType { get; set; }
+
+        public FileApiResult(byte[] fileData, string contentType)
+        {
+            FileData = fileData;
+            ContentType = contentType;
+        }
+    }
+
     public sealed class NoContentApiResult : IApiResult
     {
     }

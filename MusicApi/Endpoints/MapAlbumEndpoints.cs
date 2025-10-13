@@ -23,12 +23,13 @@ public static class MapAlbumEndpoints
         .WithDescription("Retrieves a list of all albums in the collection.")
         .Produces<OkObjectResult>(StatusCodes.Status200OK);
 
-        albumGroup.MapPost("/", async ([FromBody] CreateAlbumRequest request, ApiRequestPipeline apiRequestPipeline) =>
+        albumGroup.MapPost("/", async ([FromForm] CreateAlbumRequest request, ApiRequestPipeline apiRequestPipeline) =>
         {
             var result = await apiRequestPipeline.RunPipeLineAsync(request, new CancellationToken());
 
             return result.MapToResult();
         })
+        .DisableAntiforgery()
         .WithName("CreateAlbum")
         .WithSummary("Create a new album entry")
         .WithDescription("Creates a new album entry in the collection.")

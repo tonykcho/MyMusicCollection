@@ -13,12 +13,19 @@ export default class AlbumService {
     }
 
     static async createAlbum(albumData: CreateAlbumDto) {
+        const formData = new FormData();
+        formData.append('Title', albumData.title);
+        formData.append('Artist', albumData.artist);
+        formData.append('ReleaseDate', albumData.releaseDate);
+        if (albumData.coverImage) {
+            formData.append('CoverImage', albumData.coverImage);
+        }
+
+        console.log('Submitting album with data:', albumData);
+
         const response = await fetch(this.baseUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(albumData),
+            body: formData
         });
         if (!response.ok) {
             throw new Error('Failed to create album');

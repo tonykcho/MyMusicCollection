@@ -2,7 +2,7 @@
 
 import { Album } from "@/models/album";
 import AlbumService from "@/services/album-service";
-import { Drawer, TextInput } from "@mantine/core";
+import { Drawer, FileInput, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -15,6 +15,7 @@ export default function Albums() {
             title: '',
             artist: '',
             releaseDate: null as string | null,
+            coverImage: null as File | null,
         },
 
         validate: {
@@ -37,6 +38,7 @@ export default function Albums() {
             title: values.title,
             artist: values.artist,
             releaseDate: values.releaseDate ?? '',
+            coverImage: values.coverImage ?? undefined,
         };
 
         AlbumService.createAlbum(albumData)
@@ -110,6 +112,13 @@ export default function Albums() {
                         placeholder="Album Release Date"
                         key={form.key('releaseDate')}
                         {...form.getInputProps('releaseDate')}
+                    />
+                    <FileInput
+                        className="mb-3"
+                        label="Cover Image"
+                        placeholder="Upload Cover Image"
+                        key={form.key('coverImage')}
+                        {...form.getInputProps('coverImage')}
                     />
                     <button type="submit" className="mt-3 bg-purple-400 text-white p-2 rounded hover:bg-purple-500 transition-colors active:scale-95 transition-transform">Add Album</button>
                 </form>
