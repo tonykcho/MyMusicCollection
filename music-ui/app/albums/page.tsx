@@ -1,8 +1,9 @@
 'use client';
 
-import { Album, AlbumDto } from "@/models/album";
+import { Album } from "@/models/album";
+import AlbumService from "@/services/album-service";
 import { Drawer, TextInput } from "@mantine/core";
-import { DatePicker, DatePickerInput, DateTimePicker } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
@@ -13,7 +14,7 @@ export default function Albums() {
         initialValues: {
             title: '',
             artist: '',
-            releaseDate: null,
+            releaseDate: null as string | null,
         },
 
         validate: {
@@ -26,11 +27,28 @@ export default function Albums() {
     const albumsQuery = useQuery({
         queryKey: ['albums'],
         queryFn: async () => {
-            const res = await fetch('https://localhost:7279/api/albums');
-            const albumDtos: AlbumDto[] = await res.json();
-            return albumDtos.map(dto => new Album(dto));
+            return AlbumService.getAlbums();
         }
     })
+
+    function submitAlbum(values: typeof form.values) {
+        console.log(form.values)
+        const albumData = {
+            title: values.title,
+            artist: values.artist,
+            releaseDate: values.releaseDate ?? '',
+        };
+
+        AlbumService.createAlbum(albumData)
+            .then(() => {
+                form.reset();
+                close();
+                albumsQuery.refetch();
+            })
+            .catch((error) => {
+                console.error('Error creating album:', error);
+            });
+    }
 
     if (albumsQuery.isLoading) {
         return (
@@ -53,20 +71,25 @@ export default function Albums() {
             <div className='flex flex-row flex-wrap overflow-y-auto p-2'>
                 {albumsQuery.data?.map((album: Album) => (
                     <div className="p-1 w-1/5 h-60 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform" key={album.id}>
-                        <div className="p-4 flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
-                            <p className="text-lg font-semibold">{album.title}</p>
-                            <p className="text-sm text-gray-600">Artist: {album.artist}</p>
-                            <p className="text-sm text-gray-600">Year: {album.releaseDate.getFullYear()}</p>
+                        <div className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
+                            <div className="flex-1"></div>
+                            <div className="flex items-end">
+                                <div className="flex-1 flex flex-col">
+                                    <p className="text-sm text-gray-600">Artist: {album.artist}</p>
+                                    <p className="text-sm text-gray-600">Year: {album.releaseDate.getFullYear()}</p>
+                                </div>
+                                <p className="text-lg font-semibold">{album.title}</p>
+                            </div>
                         </div>
                     </div>
                 ))}
-                <button onClick={open} className="flex items-center justify-center fixed bottom-8 right-8 bg-purple-400 w-12 h-12 text-white p-4 rounded-full shadow-lg cursor-pointer hover:scale-105 hover:bg-purple-500 transition-colors">
+                <button onClick={() => { form.reset(); open() }} className="flex items-center justify-center fixed bottom-8 right-8 bg-purple-400 w-12 h-12 text-white p-4 rounded-full shadow-lg cursor-pointer hover:scale-105 hover:bg-purple-500 transition-colors">
                     <p className="text-xl">+</p>
                 </button>
             </div>
 
             <Drawer size="md" opened={opened} onClose={close} withCloseButton={false} position="right" padding="xl">
-                <form onSubmit={form.onSubmit(console.log)} className="flex flex-col h-full">
+                <form onSubmit={form.onSubmit(submitAlbum)} className="flex flex-col h-full">
                     <TextInput
                         className="mb-3"
                         label="Title"

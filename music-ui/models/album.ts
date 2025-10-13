@@ -18,3 +18,9 @@ export class Album {
         this.releaseDate = new Date(albumDto.releaseDate);
     }
 }
+
+export interface CreateAlbumDto {
+    title: string;
+    artist: string;
+    releaseDate: string;
+}

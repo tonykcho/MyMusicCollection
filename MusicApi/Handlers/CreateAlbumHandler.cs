@@ -39,7 +39,7 @@ public class CreateAlbumHandler : IApiRequestHandler<CreateAlbumRequest>
         {
             Title = request.Title,
             Artist = request.Artist,
-            ReleaseDate = request.ReleaseDate
+            ReleaseDate = request.ReleaseDate.ToUniversalTime(),
         };
 
         await _dbContext.Albums.AddAsync(album);
