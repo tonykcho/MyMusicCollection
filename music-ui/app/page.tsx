@@ -1,5 +1,4 @@
 'use client';
-import { AppShell } from '@mantine/core';
 
 export default function Home() {
 
