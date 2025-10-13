@@ -3,32 +3,29 @@ import { AppShell, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
 export default function Home() {
-  const [opened, { toggle }] = useDisclosure();
 
   return (
     <AppShell
-      padding="md"
+      padding='md'
       header={{ height: 60 }}
-      navbar={{
-        width: 300,
-        breakpoint: 'sm',
-        collapsed: { mobile: !opened },
-      }}
     >
       <AppShell.Header>
-        <Burger
-          opened={opened}
-          onClick={toggle}
-          hiddenFrom="sm"
-          size="sm"
-        />
-
-        <div>Logo</div>
+        <div className='flex flex-row items-center px-8 h-full bg-[#b197fc]  text-[#343a40]'>
+          <p className='text-lg font-semibold flex-1'>Music Collections</p>
+          <button>
+            <a href='#'>Albums</a>
+          </button>
+          <button className='ps-4'>
+            <a href='#'>Music</a>
+          </button>
+        </div>
       </AppShell.Header>
 
-      <AppShell.Navbar>Navbar</AppShell.Navbar>
-
-      <AppShell.Main>Main</AppShell.Main>
+      <AppShell.Main className='flex flex-col'>
+        <div className='flex flex-row items-center justify-center flex-1'>
+          <p className='text-xl'>Welcome to Music Collection</p>
+        </div>
+      </AppShell.Main>
     </AppShell>
   );
 }
