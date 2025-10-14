@@ -1,9 +1,13 @@
+import { Music, MusicDto } from "./music";
+
 export interface AlbumDto {
     id: string;
     title: string;
     artist: string;
     releaseDate: string;
     hasCoverImage: boolean;
+
+    musics: MusicDto[];
 }
 
 export class Album {
@@ -14,12 +18,16 @@ export class Album {
     hasCoverImage: boolean;
     coverUrl: string | null = null;
 
+    musics: Music[] = [];
+
     constructor(albumDto: AlbumDto) {
         this.id = albumDto.id;
         this.title = albumDto.title;
         this.artist = albumDto.artist;
         this.releaseDate = new Date(albumDto.releaseDate);
         this.hasCoverImage = albumDto.hasCoverImage;
+
+        this.musics = albumDto.musics.map(musicDto => new Music(musicDto));
     }
 
     getDateString(): string {

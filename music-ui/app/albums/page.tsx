@@ -41,7 +41,7 @@ export default function Albums() {
         const coverUrl = coverUrls[album.id];
         album.coverUrl = coverUrl;
         return (<div className="p-1 w-1/5 h-68 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform" key={album.id}>
-            <div onClick={() => albumDetailDrawerRef.current?.openDrawer(album)} style={{ backgroundImage: album.coverUrl != null ? `url(${album.coverUrl})` : undefined, backgroundSize: 'cover' }} className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
+            <div onClick={() => albumDetailDrawerRef.current?.openDrawer(album.id, album.coverUrl)} style={{ backgroundImage: album.coverUrl != null ? `url(${album.coverUrl})` : undefined, backgroundSize: 'cover' }} className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
                 <div className="flex-1"></div>
                 <div className="flex items-end">
                     <div className="flex-1 flex flex-col">

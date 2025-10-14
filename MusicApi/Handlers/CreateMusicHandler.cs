@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using MusicApi.Abstracts;
 using MusicApi.DbContexts;
 using MusicApi.Models;
@@ -10,6 +11,7 @@ public class CreateMusicRequest : IApiRequest
     public string Title { get; set; } = string.Empty;
     public string Artist { get; set; } = string.Empty;
     public DateTimeOffset ReleaseDate { get; set; }
+    public Guid? AlbumId { get; set; }
 }
 
 public class CreateMusicRequestValidator : AbstractValidator<CreateMusicRequest>
@@ -41,6 +43,17 @@ public class CreateMusicHandler : IApiRequestHandler<CreateMusicRequest>
             Artist = request.Artist,
             ReleaseDate = request.ReleaseDate.ToUniversalTime(),
         };
+
+        if (request.AlbumId.HasValue)
+        {
+            var albumExist = await _dbContext.Albums.AnyAsync(album => album.Id == request.AlbumId.Value, cancellationToken);
+            if (!albumExist)
+            {
+                return new BadRequestApiResult("Album does not exist.");
+            }
+
+            music.AlbumId = request.AlbumId.Value;
+        }
 
         await _dbContext.Musics.AddAsync(music);
         await _dbContext.SaveChangesAsync(cancellationToken);

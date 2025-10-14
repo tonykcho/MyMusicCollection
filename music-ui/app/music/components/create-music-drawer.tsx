@@ -10,6 +10,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { forwardRef, useImperativeHandle } from "react";
 
 export interface CreateMusicDrawerRef {
+    opened: boolean;
     openDrawer: (album?: Album | null) => void;
 }
 
@@ -36,6 +37,7 @@ const CreateMusicDrawer = forwardRef<CreateMusicDrawerRef, CreateMusicDrawerProp
     })
 
     useImperativeHandle(ref, () => ({
+        opened: opened,
         openDrawer: openDrawer,
     }));
 
@@ -44,7 +46,7 @@ const CreateMusicDrawer = forwardRef<CreateMusicDrawerRef, CreateMusicDrawerProp
 
         if (album != null) {
             form.setFieldValue('artist', album.artist);
-            form.setFieldValue('releaseDate', album.releaseDate.toDateString());
+            form.setFieldValue('releaseDate', album.releaseDate.toISOString());
             form.setFieldValue('albumId', album.id);
         }
 

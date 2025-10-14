@@ -1,50 +1,97 @@
 'use client'
 
 import { Album } from "@/models/album";
+import AlbumService from "@/services/album-service";
 import { Drawer, Image } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { useQuery } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle, useState } from "react";
+import { CreateAlbumDrawerRef } from "./create-album-drawer";
+import React from "react";
+import CreateMusicDrawer, { CreateMusicDrawerRef } from "@/app/music/components/create-music-drawer";
 
 export interface AlbumDetailDrawerRef {
-    openDrawer: (album: Album) => void;
+    openDrawer: (id: string, coverUrl?: string | null) => void;
 }
 
 const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef>((props, ref) => {
     const [opened, { open, close }] = useDisclosure(false);
+    const [albumId, setAlbumId] = useState<string | null>(null);
+    const [coverUrl, setCoverUrl] = useState<string | null>(null);
     const [album, setAlbum] = useState<Album | null>(null);
+
+    const createMusicDrawerRef = React.useRef<CreateMusicDrawerRef>(null);
 
     useImperativeHandle(ref, () => ({
         openDrawer: openDrawer,
     }));
 
-    function openDrawer(album: Album) {
-        setAlbum(album);
+    function openDrawer(id: string, coverUrl?: string | null) {
+        setAlbumId(id);
+        setCoverUrl(coverUrl || null);
         open();
     }
 
+    function closeDrawer() {
+        if (createMusicDrawerRef.current?.opened) {
+            return;
+        }
+
+        close();
+    }
+
+    const query = useQuery({
+        queryKey: ['album-detail', albumId],
+        queryFn: async () => {
+            if (!albumId) return null;
+            const fetchedAlbum = await AlbumService.getAlbumById(albumId);
+            fetchedAlbum.coverUrl = coverUrl;
+            setAlbum(fetchedAlbum);
+            return fetchedAlbum;
+        },
+        enabled: !!albumId
+    });
+
     return (
-        <Drawer size="md" opened={opened} onClose={close} withCloseButton={false} position="right" padding="xl">
-            <div className="flex flex-col overflow-y-auto">
-                <Image className="self-center" radius="md" src={album?.coverUrl} w={250} h={250} alt={album?.title} />
-                <div className="flex flex-row mt-4">
-                    <p className="text-lg mt-2 flex-[0_0_140]">Title:</p>
-                    <p className="text-lg mt-2 flex-1">{album?.title}</p>
-                </div>
-                <div className="flex flex-row">
-                    <p className="text-lg mt-2 flex-[0_0_140]">Artist:</p>
-                    <p className="text-lg mt-2 flex-1">{album?.artist}</p>
-                </div>
-                <div className="flex flex-row">
-                    <p className="text-lg mt-2 flex-[0_0_140]">Release Date:</p>
-                    <p className="text-lg mt-2 flex-1">{album?.getDateString()}</p>
-                </div>
+        <>
+            <Drawer size="md" opened={opened} onClose={closeDrawer} withCloseButton={false} position="right" padding="xl">
+                <div className="flex flex-col overflow-y-auto">
+                    <Image className="self-center" radius="md" src={album?.coverUrl} w={250} h={250} alt={album?.title} />
+                    <div className="flex flex-row mt-4">
+                        <p className="text-lg mt-2 flex-[0_0_140]">Title:</p>
+                        <p className="text-lg mt-2 flex-1">{album?.title}</p>
+                    </div>
+                    <div className="flex flex-row">
+                        <p className="text-lg mt-2 flex-[0_0_140]">Artist:</p>
+                        <p className="text-lg mt-2 flex-1">{album?.artist}</p>
+                    </div>
+                    <div className="flex flex-row">
+                        <p className="text-lg mt-2 flex-[0_0_140]">Release Date:</p>
+                        <p className="text-lg mt-2 flex-1">{album?.getDateString()}</p>
+                    </div>
 
-                <div className="flex flex-col mt-4">
-                    <p className="font-bold text-lg">Music List</p>
-                </div>
+                    <div className="flex flex-col mt-4">
+                        <div className="flex flex-row items-center">
+                            <p className="font-bold text-lg">Music List</p>
+                            <button onClick={() => createMusicDrawerRef.current?.openDrawer(album)} className="flex items-center justify-center fixed bottom-8 right-8 bg-purple-400 w-12 h-12 text-white p-4 rounded-full shadow-lg cursor-pointer hover:scale-105 hover:bg-purple-500 transition-colors">
+                                <p className="text-xl">+</p>
+                            </button>
+                        </div>
 
-            </div>
-        </Drawer>
+                        {album?.musics.map((music, index) => (
+                            <div key={music.id} className="flex flex-row mt-2">
+                                <p className="text-md mt-2 flex-[0_0_30]">{index + 1}.</p>
+                                <p className="text-md mt-2 flex-1">{music.title}</p>
+                                <p className="text-md mt-2 flex-[0_0_100] text-right">{music.releaseDate.getFullYear()}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                </div>
+            </Drawer>
+
+            <CreateMusicDrawer ref={createMusicDrawerRef} onMusicCreated={() => { query.refetch(); }} />
+        </>
     )
 });
 

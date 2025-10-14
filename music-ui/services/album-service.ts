@@ -12,6 +12,15 @@ export default class AlbumService {
         return albumDtos.map((dto) => new Album(dto));
     }
 
+    static async getAlbumById(albumId: string) {
+        const response = await fetch(`${this.baseUrl}/${albumId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch album');
+        }
+        const albumDto: AlbumDto = await response.json();
+        return new Album(albumDto);
+    }
+
     static async getAlbumCover(albumId: string) {
         const response = await fetch(`${this.baseUrl}/${albumId}/cover`);
         if (!response.ok) {
