@@ -13,6 +13,7 @@ public class AlbumMapper
             Title = album.Title,
             Artist = album.Artist,
             ReleaseDate = album.ReleaseDate,
+            HasCoverImage = !string.IsNullOrEmpty(album.CoverImagePath),
             Musics = album.Musics.Select(MusicMapper.MapToDto).ToList()
         };
     }

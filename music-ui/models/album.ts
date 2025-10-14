@@ -3,6 +3,7 @@ export interface AlbumDto {
     title: string;
     artist: string;
     releaseDate: string;
+    hasCoverImage: boolean;
 }
 
 export class Album {
@@ -10,6 +11,7 @@ export class Album {
     title: string;
     artist: string;
     releaseDate: Date;
+    hasCoverImage: boolean;
     coverUrl: string | null = null;
 
     constructor(albumDto: AlbumDto) {
@@ -17,6 +19,7 @@ export class Album {
         this.title = albumDto.title;
         this.artist = albumDto.artist;
         this.releaseDate = new Date(albumDto.releaseDate);
+        this.hasCoverImage = albumDto.hasCoverImage;
     }
 }
 
