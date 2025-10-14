@@ -26,3 +26,11 @@ body {
   height: 100vh;
   width: 100vw;
 }
+
+.action-button {
+  @apply flex items-center justify-center p-2 rounded-full cursor-pointer w-12 h-12;
+}
+
+.mantine-Drawer-body {
+  height: 100%;
+}

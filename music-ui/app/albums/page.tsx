@@ -2,7 +2,7 @@
 
 import { Album } from "@/models/album";
 import AlbumService from "@/services/album-service";
-import { useInfiniteQuery, useQueries, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueries } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import CreateAlbumDrawer, { CreateAlbumDrawerRef } from "./components/create-album-drawer";
 import AlbumDetailDrawer, { AlbumDetailDrawerRef } from "./components/album-detail-drawer";

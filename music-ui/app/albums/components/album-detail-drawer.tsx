@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import React from "react";
 import CreateMusicDrawer, { CreateMusicDrawerRef } from "@/app/music/components/create-music-drawer";
+import { FaTrashCan, FaPlus } from "react-icons/fa6"
 
 export interface AlbumDetailDrawerRef {
     openDrawer: (id: string, coverUrl?: string | null) => void;
@@ -54,7 +55,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef>((props, ref) => {
     return (
         <>
             <Drawer size="md" opened={opened} onClose={closeDrawer} withCloseButton={false} position="right" padding="xl">
-                <div className="flex flex-col overflow-y-auto">
+                <div className="flex flex-col h-full p-1">
                     <Image className="self-center border" radius="md" src={album?.coverUrl} w={250} h={250} alt={album?.title} />
                     <div className="flex flex-row mt-4">
                         <p className="text-lg mt-2 flex-[0_0_140]">Title:</p>
@@ -69,23 +70,30 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef>((props, ref) => {
                         <p className="text-lg mt-2 flex-1">{album?.getDateString()}</p>
                     </div>
 
-                    <div className="flex flex-col mt-4">
-                        <div className="flex flex-row items-center">
-                            <p className="font-bold text-lg">Music List</p>
-                            <button onClick={() => createMusicDrawerRef.current?.openDrawer(album)} className="flex items-center justify-center fixed bottom-8 right-8 bg-purple-400 w-12 h-12 text-white p-4 rounded-full shadow-lg cursor-pointer hover:scale-105 hover:bg-purple-500 transition-colors">
-                                <p className="text-xl">+</p>
-                            </button>
-                        </div>
-
-                        {album?.musics.map((music, index) => (
-                            <div key={music.id} className="flex flex-row mt-2">
-                                <p className="text-md mt-2 flex-[0_0_30]">{index + 1}.</p>
-                                <p className="text-md mt-2 flex-1">{music.title}</p>
-                                <p className="text-md mt-2 flex-[0_0_100] text-right">{music.releaseDate.getFullYear()}</p>
-                            </div>
-                        ))}
+                    <div className="flex flex-row items-center mt-2">
+                        <p className="font-bold text-lg">Music List</p>
                     </div>
 
+                    <div className="flex-1 flex flex-col overflow-y-auto mt-2 rounded-lg">
+                        <div className="flex-1 flex flex-col ">
+                            {album?.musics.map((music, index) => (
+                                <div key={music.id} className="flex flex-row items-center hover:bg-gray-100 mt-2 py-1 rounded-md">
+                                    <p className="text-md flex-[0_0_30]">{index + 1}.</p>
+                                    <p className="text-md flex-1">{music.title}</p>
+                                    <p className="text-md flex-[0_0_100] text-right">{music.releaseDate.getFullYear()}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-4">
+                        <button className="action-button bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors" title="Delete Album">
+                            <FaTrashCan size={20} />
+                        </button>
+                        <button onClick={() => createMusicDrawerRef.current?.openDrawer(album)} className="action-button bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">
+                            <FaPlus size={20} />
+                        </button>
+                    </div>
                 </div>
             </Drawer>
 
