@@ -98,6 +98,4 @@ const CreateAlbumDrawer = forwardRef<CreateAlbumDrawerRef, CreateAlbumDrawerProp
     )
 });
 
-CreateAlbumDrawer.displayName = 'CreateAlbumDrawer';
-
 export default CreateAlbumDrawer;

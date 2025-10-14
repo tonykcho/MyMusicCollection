@@ -21,6 +21,16 @@ export class Album {
         this.releaseDate = new Date(albumDto.releaseDate);
         this.hasCoverImage = albumDto.hasCoverImage;
     }
+
+    getDateString(): string {
+        if (isNaN(this.releaseDate.getTime())) {
+            return '';
+        }
+
+        const month = this.releaseDate.toLocaleString('default', { month: 'long' });
+
+        return `${this.releaseDate.getDate()} ${month} ${this.releaseDate.getFullYear()}`
+    }
 }
 
 export interface CreateAlbumDto {

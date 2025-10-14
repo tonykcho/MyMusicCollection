@@ -5,10 +5,12 @@ import AlbumService from "@/services/album-service";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import React from "react";
 import CreateAlbumDrawer, { CreateAlbumDrawerRef } from "./components/create-album-drawer";
+import AlbumDetailDrawer, { AlbumDetailDrawerRef } from "./components/album-detail-drawer";
 
 export default function Albums() {
     const [coverUrls, setCoverUrls] = React.useState<{ [key: string]: string }>({});
     const createAlbumDrawerRef = React.useRef<CreateAlbumDrawerRef>(null);
+    const albumDetailDrawerRef = React.useRef<AlbumDetailDrawerRef>(null);
 
     const albumsQuery = useQuery({
         queryKey: ['albums'],
@@ -37,13 +39,14 @@ export default function Albums() {
 
     function RenderAlbum(album: Album) {
         const coverUrl = coverUrls[album.id];
-        return (<div className="p-1 w-1/5 h-60 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform" key={album.id}>
-            <div style={{ backgroundImage: coverUrl != null ? `url(${coverUrl})` : undefined, backgroundSize: 'cover' }} className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
+        album.coverUrl = coverUrl;
+        return (<div className="p-1 w-1/5 h-68 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform" key={album.id}>
+            <div onClick={() => albumDetailDrawerRef.current?.openDrawer(album)} style={{ backgroundImage: album.coverUrl != null ? `url(${album.coverUrl})` : undefined, backgroundSize: 'cover' }} className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
                 <div className="flex-1"></div>
                 <div className="flex items-end">
                     <div className="flex-1 flex flex-col">
-                        <p className="text-sm text-gray-600">Artist: {album.artist}</p>
-                        <p className="text-sm text-gray-600">Year: {album.releaseDate.getFullYear()}</p>
+                        <p className="text-sm text-gray-600">{album.artist}</p>
+                        <p className="text-sm text-gray-600">{album.releaseDate.getFullYear()}</p>
                     </div>
                     <p className="text-lg font-semibold">{album.title}</p>
                 </div>
@@ -79,6 +82,8 @@ export default function Albums() {
             </div>
 
             <CreateAlbumDrawer ref={createAlbumDrawerRef} onAlbumCreated={() => { albumsQuery.refetch(); }} />
+
+            <AlbumDetailDrawer ref={albumDetailDrawerRef} />
         </>
     );
 }
