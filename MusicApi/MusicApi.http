@@ -14,16 +14,10 @@ Content-Type: application/json
     "ReleaseDate": "2023-10-01T00:00:00Z"
 }
 
-### Create Album
-Post {{MusicApi_HostAddress}}/api/albums
-Content-Type: application/json
-
-{
-    "Title": "Album6",
-    "Artist": "Band",
-    "ReleaseDate": "2023-10-01T00:00:00Z"
-}
-
 ### Get Albums
 GET {{MusicApi_HostAddress}}/api/albums
+Accept: application/json
+
+### Get Album
+GET {{MusicApi_HostAddress}}/api/albums/f0ca3e65-4984-4cfd-9fb0-6de4ca21fe95
 Accept: application/json

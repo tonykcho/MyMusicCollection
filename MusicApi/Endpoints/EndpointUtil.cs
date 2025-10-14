@@ -21,7 +21,7 @@ public static class EndpointUtil
             ValidationErrorApiResult validationErrorApiResult => Results.ValidationProblem(validationErrorApiResult.Data),
             NoContentApiResult => Results.NoContent(),
             BadRequestApiResult badRequestApiResult => Results.BadRequest(badRequestApiResult.Message),
-            NotFoundApiResult => Results.NotFound(),
+            NotFoundApiResult notFoundApiResult => Results.NotFound(notFoundApiResult.Message),
             TaskCancelledApiResult => Results.StatusCode(StatusCodes.Status499ClientClosedRequest),
             _ => Results.StatusCode(StatusCodes.Status500InternalServerError)
         };

@@ -23,6 +23,19 @@ public static class MapAlbumEndpoints
         .WithDescription("Retrieves a list of all albums in the collection.")
         .Produces<OkObjectResult>(StatusCodes.Status200OK);
 
+        albumGroup.MapGet("/{id:guid}", async (Guid id, ApiRequestPipeline apiRequestPipeline) =>
+        {
+            var request = new GetAlbumRequest { AlbumId = id };
+            var result = await apiRequestPipeline.RunPipeLineAsync(request, new CancellationToken());
+
+            return result.MapToResult();
+        })
+        .WithName("GetAlbumById")
+        .WithSummary("Get album by ID")
+        .WithDescription("Retrieves a specific album by its unique ID.")
+        .Produces<OkObjectResult>(StatusCodes.Status200OK)
+        .Produces<NotFoundObjectResult>(StatusCodes.Status404NotFound);
+
         albumGroup.MapGet("/{id:guid}/cover", async (Guid id, ApiRequestPipeline apiRequestPipeline) =>
         {
             var request = new GetAlbumCoverImageRequest { AlbumId = id };

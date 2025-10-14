@@ -54,6 +54,11 @@ namespace MusicApi.Abstracts
 
     public sealed class NotFoundApiResult : IApiResult
     {
+        public string Message { get; set; } = string.Empty;
+        public NotFoundApiResult(string message = "")
+        {
+            Message = message;
+        }
     }
 
     public sealed class TaskCancelledApiResult : IApiResult
