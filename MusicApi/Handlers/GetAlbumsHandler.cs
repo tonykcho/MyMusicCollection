@@ -8,6 +8,8 @@ namespace MusicApi.Handlers;
 
 public class GetAlbumsRequest : IApiRequest
 {
+    public int Offset { get; set; } = 0;
+    public int Limit { get; set; } = 20;
 }
 
 public class GetAlbumsHandler : IApiRequestHandler<GetAlbumsRequest>
@@ -20,6 +22,8 @@ public class GetAlbumsHandler : IApiRequestHandler<GetAlbumsRequest>
     public async Task<IApiResult> HandleAsync(GetAlbumsRequest request, CancellationToken cancellationToken)
     {
         var albums = await _dbContext.Albums
+            .Skip(request.Offset)
+            .Take(request.Limit)
             .ToListAsync(cancellationToken);
 
         var albumDtos = albums.Select(AlbumMapper.MapToDto).ToList();

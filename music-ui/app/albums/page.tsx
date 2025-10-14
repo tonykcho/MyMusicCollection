@@ -2,24 +2,52 @@
 
 import { Album } from "@/models/album";
 import AlbumService from "@/services/album-service";
-import { useQueries, useQuery } from "@tanstack/react-query";
-import React from "react";
+import { useInfiniteQuery, useQueries, useQuery } from "@tanstack/react-query";
+import React, { useEffect } from "react";
 import CreateAlbumDrawer, { CreateAlbumDrawerRef } from "./components/create-album-drawer";
 import AlbumDetailDrawer, { AlbumDetailDrawerRef } from "./components/album-detail-drawer";
+
+const PAGE_SIZE = 20;
 
 export default function Albums() {
     const [coverUrls, setCoverUrls] = React.useState<{ [key: string]: string }>({});
     const createAlbumDrawerRef = React.useRef<CreateAlbumDrawerRef>(null);
     const albumDetailDrawerRef = React.useRef<AlbumDetailDrawerRef>(null);
 
-    const albumsQuery = useQuery({
+    const albumsQuery = useInfiniteQuery({
         queryKey: ['albums'],
-        queryFn: async () => {
-            return AlbumService.getAlbums();
+        queryFn: async ({ pageParam = 0 }) => {
+            const albums = await AlbumService.getAlbums(pageParam * PAGE_SIZE, PAGE_SIZE);
+            return albums;
+        },
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages) => {
+            if (lastPage.length === 0) {
+                return undefined; // No more pages
+            }
+            return allPages.length; // Next page index
         }
     })
 
-    const albums: Album[] = albumsQuery.data ?? [];
+    const loaderRef = React.useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (!loaderRef.current) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                albumsQuery.fetchNextPage();
+            }
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 1.0
+        });
+
+        observer.observe(loaderRef.current);
+        return () => observer.disconnect();
+    }, [albumsQuery.hasNextPage, albumsQuery.fetchNextPage]);
+
+    const albums: Album[] = albumsQuery.data?.pages.flatMap(page => page) || [];
 
     useQueries({
         queries: albums.filter(album => album.hasCoverImage).map((album) => ({
@@ -73,9 +101,10 @@ export default function Albums() {
     return (
         <>
             <div className='flex flex-row flex-wrap overflow-y-auto p-2'>
-                {albumsQuery.data?.map((album: Album) => (
+                {albums.map((album: Album) => (
                     RenderAlbum(album)
                 ))}
+                <div ref={loaderRef} style={{ height: 1 }} />
                 <button onClick={() => createAlbumDrawerRef.current?.openDrawer()} className="flex items-center justify-center fixed bottom-8 right-8 bg-purple-400 w-12 h-12 text-white p-4 rounded-full shadow-lg cursor-pointer hover:scale-105 hover:bg-purple-500 transition-colors">
                     <p className="text-xl">+</p>
                 </button>

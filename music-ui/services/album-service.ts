@@ -3,8 +3,8 @@ import { Album, AlbumDto, CreateAlbumDto } from "@/models/album";
 export default class AlbumService {
     static baseUrl = 'https://localhost:7279/api/albums';
 
-    static async getAlbums() {
-        const response = await fetch(this.baseUrl);
+    static async getAlbums(offset: number = 0, limit: number = 20) {
+        const response = await fetch(`${this.baseUrl}?offset=${offset}&limit=${limit}`);
         if (!response.ok) {
             throw new Error('Failed to fetch albums');
         }
