@@ -9,10 +9,7 @@ export interface AlbumDetailDrawerRef {
     openDrawer: (album: Album) => void;
 }
 
-export interface AlbumDetailDrawerProps {
-}
-
-const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProps>((props, ref) => {
+const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef>((props, ref) => {
     const [opened, { open, close }] = useDisclosure(false);
     const [album, setAlbum] = useState<Album | null>(null);
 
