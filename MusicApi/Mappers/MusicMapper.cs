@@ -9,6 +9,7 @@ public class MusicMapper
     {
         return new MusicDto
         {
+            Id = music.Id,
             Title = music.Title,
             Artist = music.Artist,
             ReleaseDate = music.ReleaseDate,

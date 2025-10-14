@@ -39,7 +39,7 @@ public class CreateMusicHandler : IApiRequestHandler<CreateMusicRequest>
         {
             Title = request.Title,
             Artist = request.Artist,
-            ReleaseDate = request.ReleaseDate
+            ReleaseDate = request.ReleaseDate.ToUniversalTime(),
         };
 
         await _dbContext.Musics.AddAsync(music);

@@ -1,4 +1,4 @@
-import { Album, CreateAlbumDto } from "@/models/album";
+import { Album, AlbumDto, CreateAlbumDto } from "@/models/album";
 
 export default class AlbumService {
     static baseUrl = 'https://localhost:7279/api/albums';
@@ -8,8 +8,8 @@ export default class AlbumService {
         if (!response.ok) {
             throw new Error('Failed to fetch albums');
         }
-        const albumDtos = await response.json();
-        return albumDtos.map((dto: any) => new Album(dto));
+        const albumDtos: AlbumDto[] = await response.json();
+        return albumDtos.map((dto) => new Album(dto));
     }
 
     static async getAlbumCover(albumId: string) {
@@ -28,8 +28,6 @@ export default class AlbumService {
         if (albumData.coverImage) {
             formData.append('CoverImage', albumData.coverImage);
         }
-
-        console.log('Submitting album with data:', albumData);
 
         const response = await fetch(this.baseUrl, {
             method: 'POST',
