@@ -2,14 +2,16 @@
 
 import { Album } from "@/models/album";
 import AlbumService from "@/services/album-service";
-import { Drawer, FileInput, TextInput } from "@mantine/core";
+import { BackgroundImage, Drawer, FileInput, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import React from "react";
 
 export default function Albums() {
     const [opened, { open, close }] = useDisclosure(false);
+
     const form = useForm({
         initialValues: {
             title: '',
@@ -32,6 +34,24 @@ export default function Albums() {
         }
     })
 
+    const albums: Album[] = albumsQuery.data ?? [];
+
+    const coverQueries = useQueries({
+        queries: albums.filter(album => album.id == '32bc2977-5399-4a0f-9e47-dd705de37ad0').map((album) => ({
+            queryKey: ['albumCover', album.id],
+            queryFn: async () => {
+                var cover = await AlbumService.getAlbumCover(album.id);
+                // make a url for the blob
+                if (cover) {
+                    album.coverUrl = URL.createObjectURL(cover);
+                }
+
+                return cover;
+            },
+            enabled: !!album.id,
+        }))
+    })
+
     function submitAlbum(values: typeof form.values) {
         console.log(form.values)
         const albumData = {
@@ -50,6 +70,21 @@ export default function Albums() {
             .catch((error) => {
                 console.error('Error creating album:', error);
             });
+    }
+
+    function RenderAlbum(album: Album) {
+        return (<div className="p-1 w-1/5 h-60 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform" key={album.id}>
+            <div style={{ backgroundImage: album.coverUrl != null ? `url(${album.coverUrl})` : undefined, backgroundSize: 'cover' }} className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
+                <div className="flex-1"></div>
+                <div className="flex items-end">
+                    <div className="flex-1 flex flex-col">
+                        <p className="text-sm text-gray-600">Artist: {album.artist}</p>
+                        <p className="text-sm text-gray-600">Year: {album.releaseDate.getFullYear()}</p>
+                    </div>
+                    <p className="text-lg font-semibold">{album.title}</p>
+                </div>
+            </div>
+        </div>);
     }
 
     if (albumsQuery.isLoading) {
@@ -72,18 +107,7 @@ export default function Albums() {
         <>
             <div className='flex flex-row flex-wrap overflow-y-auto p-2'>
                 {albumsQuery.data?.map((album: Album) => (
-                    <div className="p-1 w-1/5 h-60 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform" key={album.id}>
-                        <div className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
-                            <div className="flex-1"></div>
-                            <div className="flex items-end">
-                                <div className="flex-1 flex flex-col">
-                                    <p className="text-sm text-gray-600">Artist: {album.artist}</p>
-                                    <p className="text-sm text-gray-600">Year: {album.releaseDate.getFullYear()}</p>
-                                </div>
-                                <p className="text-lg font-semibold">{album.title}</p>
-                            </div>
-                        </div>
-                    </div>
+                    RenderAlbum(album)
                 ))}
                 <button onClick={() => { form.reset(); open() }} className="flex items-center justify-center fixed bottom-8 right-8 bg-purple-400 w-12 h-12 text-white p-4 rounded-full shadow-lg cursor-pointer hover:scale-105 hover:bg-purple-500 transition-colors">
                     <p className="text-xl">+</p>

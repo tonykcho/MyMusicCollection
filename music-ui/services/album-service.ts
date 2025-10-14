@@ -12,6 +12,14 @@ export default class AlbumService {
         return albumDtos.map((dto: any) => new Album(dto));
     }
 
+    static async getAlbumCover(albumId: string) {
+        const response = await fetch(`${this.baseUrl}/${albumId}/cover`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch album cover');
+        }
+        return response.blob();
+    }
+
     static async createAlbum(albumData: CreateAlbumDto) {
         const formData = new FormData();
         formData.append('Title', albumData.title);

@@ -2,8 +2,11 @@ namespace MusicApi.Services;
 
 public class ImageStorageService
 {
-    public async Task<byte[]> GetImageAsync(string filePath)
+    public async Task<byte[]> GetImageAsync(string filename)
     {
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+        var filePath = Path.Combine(uploadsFolder, filename);
+
         if (!File.Exists(filePath))
         {
             throw new FileNotFoundException("File not found.", filePath);

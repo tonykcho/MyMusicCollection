@@ -10,6 +10,7 @@ export class Album {
     title: string;
     artist: string;
     releaseDate: Date;
+    coverUrl: string | null = null;
 
     constructor(albumDto: AlbumDto) {
         this.id = albumDto.id;
