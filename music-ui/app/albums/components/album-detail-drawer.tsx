@@ -9,6 +9,7 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 import React from "react";
 import CreateMusicDrawer, { CreateMusicDrawerRef } from "@/app/music/components/create-music-drawer";
 import { FaTrashCan, FaPlus } from "react-icons/fa6"
+import { useMessage } from "@/components/message";
 
 export interface AlbumDetailDrawerRef {
     openDrawer: (id: string, coverUrl?: string | null) => void;
@@ -19,6 +20,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef>((props, ref) => {
     const [albumId, setAlbumId] = useState<string | null>(null);
     const [coverUrl, setCoverUrl] = useState<string | null>(null);
     const [album, setAlbum] = useState<Album | null>(null);
+    const { confirm } = useMessage();
 
     const createMusicDrawerRef = React.useRef<CreateMusicDrawerRef>(null);
 
@@ -38,6 +40,13 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef>((props, ref) => {
         }
 
         close();
+    }
+
+    async function onAlbumDeleted() {
+        const confirmed = await confirm("Are you sure you want to delete this album?");
+        if (confirmed) {
+            console.log("Album deleted");
+        }
     }
 
     const query = useQuery({
@@ -87,7 +96,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef>((props, ref) => {
                     </div>
 
                     <div className="flex items-center justify-between mt-4">
-                        <button className="action-button bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors" title="Delete Album">
+                        <button onClick={() => onAlbumDeleted()} className="action-button bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors" title="Delete Album">
                             <FaTrashCan size={20} />
                         </button>
                         <button onClick={() => createMusicDrawerRef.current?.openDrawer(album)} className="action-button bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">

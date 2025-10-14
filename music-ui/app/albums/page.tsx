@@ -6,6 +6,7 @@ import { useInfiniteQuery, useQueries } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import CreateAlbumDrawer, { CreateAlbumDrawerRef } from "./components/create-album-drawer";
 import AlbumDetailDrawer, { AlbumDetailDrawerRef } from "./components/album-detail-drawer";
+import { FaPlus } from "react-icons/fa6";
 
 const PAGE_SIZE = 20;
 
@@ -105,8 +106,8 @@ export default function Albums() {
                     RenderAlbum(album)
                 ))}
                 <div ref={loaderRef} style={{ height: 1 }} />
-                <button onClick={() => createAlbumDrawerRef.current?.openDrawer()} className="flex items-center justify-center fixed bottom-8 right-8 bg-purple-400 w-12 h-12 text-white p-4 rounded-full shadow-lg cursor-pointer hover:scale-105 hover:bg-purple-500 transition-colors">
-                    <p className="text-xl">+</p>
+                <button onClick={() => createAlbumDrawerRef.current?.openDrawer()} className="action-button fixed bottom-8 right-8 bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">
+                    <FaPlus size={20} />
                 </button>
             </div>
 

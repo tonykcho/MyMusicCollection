@@ -5,6 +5,7 @@ import CreateMusicDrawer, { CreateMusicDrawerRef } from "./components/create-mus
 import { useQuery } from "@tanstack/react-query";
 import MusicService from "@/services/music-service";
 import { Music } from "@/models/music";
+import { FaPlus } from "react-icons/fa6";
 
 export default function MusicPage() {
     const createMusicDrawerRef = React.useRef<CreateMusicDrawerRef>(null);
@@ -54,8 +55,8 @@ export default function MusicPage() {
                 {musicQuery.data?.map((music: Music) => (
                     RenderMusic(music)
                 ))}
-                <button onClick={() => createMusicDrawerRef.current?.openDrawer()} className="flex items-center justify-center fixed bottom-8 right-8 bg-purple-400 w-12 h-12 text-white p-4 rounded-full shadow-lg cursor-pointer hover:scale-105 hover:bg-purple-500 transition-colors">
-                    <p className="text-xl">+</p>
+                <button onClick={() => createMusicDrawerRef.current?.openDrawer()} className="action-button fixed bottom-8 right-8 bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">
+                    <FaPlus size={20} />
                 </button>
             </div>
 

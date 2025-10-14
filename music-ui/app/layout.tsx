@@ -6,6 +6,7 @@ import { AppShell, AppShellMain, createTheme, MantineProvider } from '@mantine/c
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MessageProvider } from '@/components/message';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,22 +36,24 @@ export default function RootLayout({
       >
         <QueryClientProvider client={queryClient}>
           <MantineProvider theme={theme}>
-            <AppShell header={{ height: 60 }} padding="md">
-              <AppShell.Header>
-                <div className='flex flex-row items-center px-8 h-full bg-[#b197fc]  text-[#343a40]'>
-                  <p className='text-lg font-semibold flex-1'>Music Collections</p>
-                  <button>
-                    <a href='albums'>Albums</a>
-                  </button>
-                  <button className='ps-4'>
-                    <a href='music'>Music</a>
-                  </button>
-                </div>
-              </AppShell.Header>
-              <AppShellMain className='flex flex-col h-full'>
-                {children}
-              </AppShellMain>
-            </AppShell>
+            <MessageProvider>
+              <AppShell header={{ height: 60 }} padding="md">
+                <AppShell.Header>
+                  <div className='flex flex-row items-center px-8 h-full bg-[#b197fc]  text-[#343a40]'>
+                    <p className='text-lg font-semibold flex-1'>Music Collections</p>
+                    <button>
+                      <a href='albums'>Albums</a>
+                    </button>
+                    <button className='ps-4'>
+                      <a href='music'>Music</a>
+                    </button>
+                  </div>
+                </AppShell.Header>
+                <AppShellMain className='flex flex-col h-full'>
+                  {children}
+                </AppShellMain>
+              </AppShell>
+            </MessageProvider>
           </MantineProvider>
         </QueryClientProvider>
       </body>
