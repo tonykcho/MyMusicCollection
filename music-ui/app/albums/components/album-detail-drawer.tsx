@@ -28,7 +28,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
     return (
         <Drawer size="md" opened={opened} onClose={close} withCloseButton={false} position="right" padding="xl">
             <div className="flex flex-col overflow-y-auto">
-                <Image className="self-center" radius="md" src={album?.coverUrl} w={250} h={250} />
+                <Image className="self-center" radius="md" src={album?.coverUrl} w={250} h={250} alt={album?.title} />
                 <div className="flex flex-row mt-4">
                     <p className="text-lg mt-2 flex-[0_0_140]">Title:</p>
                     <p className="text-lg mt-2 flex-1">{album?.title}</p>
@@ -50,5 +50,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
         </Drawer>
     )
 });
+
+AlbumDetailDrawer.displayName = 'AlbumDetailDrawer';
 
 export default AlbumDetailDrawer;

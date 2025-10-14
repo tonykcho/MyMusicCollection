@@ -21,11 +21,11 @@ export default function Albums() {
 
     const albums: Album[] = albumsQuery.data ?? [];
 
-    const coverQueries = useQueries({
+    useQueries({
         queries: albums.filter(album => album.hasCoverImage).map((album) => ({
             queryKey: ['albumCover', album.id],
             queryFn: async () => {
-                var cover = await AlbumService.getAlbumCover(album.id);
+                const cover = await AlbumService.getAlbumCover(album.id);
                 // make a url for the blob
                 if (cover) {
                     setCoverUrls(prev => ({ ...prev, [album.id]: URL.createObjectURL(cover) }));

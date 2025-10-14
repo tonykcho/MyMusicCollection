@@ -2,7 +2,7 @@
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 
-import { AppShell, AppShellHeader, AppShellMain, createTheme, MantineProvider } from '@mantine/core';
+import { AppShell, AppShellMain, createTheme, MantineProvider } from '@mantine/core';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
