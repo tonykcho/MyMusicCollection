@@ -13,6 +13,7 @@ import { useMessage } from "@/components/message";
 import MusicService from "@/services/music-service";
 import { Music } from "@/models/music";
 import EditAlbumDrawer, { EditAlbumDrawerRef } from "./edit-album-drawer";
+import MusicDetailDrawer, { MusicDetailDrawerRef } from "@/app/music/components/music-detail-drawer";
 
 export interface AlbumDetailDrawerRef {
     openDrawer: (id: string, coverUrl?: string | null) => void;
@@ -32,6 +33,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
 
     const createMusicDrawerRef = React.useRef<CreateMusicDrawerRef>(null);
     const editAlbumDrawerRef = React.useRef<EditAlbumDrawerRef>(null);
+    const musicDetailDrawerRef = React.useRef<MusicDetailDrawerRef>(null);
 
     useImperativeHandle(ref, () => ({
         openDrawer: openDrawer,
@@ -45,6 +47,10 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
 
     function closeDrawer() {
         if (createMusicDrawerRef.current?.opened) {
+            return;
+        }
+
+        if (musicDetailDrawerRef.current?.opened) {
             return;
         }
 
@@ -108,7 +114,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
                     <div className="flex-1 flex flex-col overflow-y-auto mt-2 rounded-lg">
                         <div className="flex-1 flex flex-col ">
                             {album?.musics.map((music, index) => (
-                                <div key={music.id} className="flex flex-row items-center hover:bg-gray-100 mt-2 py-1 pe-4 rounded-md">
+                                <div onClick={() => musicDetailDrawerRef.current?.openDrawer(music.id, album.coverUrl)} key={music.id} className="flex flex-row items-center hover:bg-gray-100 mt-2 py-1 pe-4 rounded-md">
                                     <p className="text-md flex-[0_0_30]">{index + 1}.</p>
                                     <p className="text-md flex-1">{music.title}</p>
                                     <p className="text-md flex-[0_0_100] text-right">{music.releaseDate.getFullYear()}</p>
@@ -133,7 +139,13 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
             </Drawer>
 
             <CreateMusicDrawer ref={createMusicDrawerRef} onMusicCreated={() => { query.refetch(); }} />
-            <EditAlbumDrawer ref={editAlbumDrawerRef} onAlbumEdited={() => { query.refetch(); props.onAlbumEdited(); }} />
+            <EditAlbumDrawer
+                ref={editAlbumDrawerRef}
+                onAlbumEdited={() => { query.refetch(); props.onAlbumEdited(); }} />
+            <MusicDetailDrawer
+                ref={musicDetailDrawerRef}
+                onMusicDeleted={() => { onMusicDeleted; query.refetch(); }}
+                onMusicEdited={() => { query.refetch(); }} />
         </>
     )
 });

@@ -12,6 +12,15 @@ export default class MusicService {
         return musicDtos.map((dto) => new Music(dto));
     }
 
+    static async getMusicById(musicId: string) {
+        const response = await fetch(`${this.baseUrl}/${musicId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch music');
+        }
+        const musicDto: MusicDto = await response.json();
+        return new Music(musicDto);
+    }
+
     static async createMusic(musicData: CreateMusicDto) {
         const response = await fetch(this.baseUrl, {
             method: 'POST',

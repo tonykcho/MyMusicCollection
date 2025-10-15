@@ -7,12 +7,14 @@ import MusicService from "@/services/music-service";
 import { Music } from "@/models/music";
 import { FaPlus } from "react-icons/fa6";
 import AlbumService from "@/services/album-service";
+import MusicDetailDrawer, { MusicDetailDrawerRef } from "./components/music-detail-drawer";
 
 const PAGE_SIZE = 20;
 
 export default function MusicPage() {
     const [coverUrls, setCoverUrls] = React.useState<{ [key: string]: string }>({});
     const createMusicDrawerRef = React.useRef<CreateMusicDrawerRef>(null);
+    const musicDetailDrawerRef = React.useRef<MusicDetailDrawerRef>(null);
 
     const musicQuery = useInfiniteQuery({
         queryKey: ['musics'],
@@ -72,7 +74,7 @@ export default function MusicPage() {
         music.coverUrl = coverUrl;
         return (
             <div className="flex flex-col items-center" key={music.id}>
-                <div className="p-1 w-60 h-60 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform">
+                <div onClick={() => musicDetailDrawerRef.current?.openDrawer(music.id, music.coverUrl)} className="p-1 w-60 h-60 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform">
                     <div style={{ backgroundImage: music.coverUrl != null ? `url(${music.coverUrl})` : undefined, backgroundSize: 'cover' }} className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
                         <div className="flex-1"></div>
                         <div className="flex items-end">
@@ -116,6 +118,11 @@ export default function MusicPage() {
             </div>
 
             <CreateMusicDrawer ref={createMusicDrawerRef} onMusicCreated={() => { musicQuery.refetch(); }} />
+
+            <MusicDetailDrawer
+                ref={musicDetailDrawerRef}
+                onMusicDeleted={() => { musicQuery.refetch(); }}
+                onMusicEdited={() => { }} />
         </>
     );
 }

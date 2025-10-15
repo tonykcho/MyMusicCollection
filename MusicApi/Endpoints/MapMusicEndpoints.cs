@@ -29,6 +29,19 @@ public static class MapMusicEndpoints
         .WithDescription("Retrieves a list of all music entries in the collection.")
         .Produces<List<Music>>(StatusCodes.Status200OK);
 
+        musicGroup.MapGet("/{id:guid}", async ([FromRoute] Guid id, ApiRequestPipeline apiRequestPipeline) =>
+        {
+            var request = new GetMusicRequest { MusicId = id };
+            var result = await apiRequestPipeline.RunPipeLineAsync(request, new CancellationToken());
+
+            return result.MapToResult();
+        })
+        .WithName("GetMusicById")
+        .WithSummary("Retrieve a music entry by ID")
+        .WithDescription("Retrieves a specific music entry by its unique ID.")
+        .Produces<Music>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
+
         musicGroup.MapPost("/", async ([FromBody] CreateMusicRequest request, ApiRequestPipeline apiRequestPipeline) =>
         {
             var result = await apiRequestPipeline.RunPipeLineAsync(request, new CancellationToken());
