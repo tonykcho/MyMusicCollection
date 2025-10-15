@@ -82,7 +82,7 @@ export default function MusicPage() {
                                 <p className="text-sm text-gray-600">{music.artist}</p>
                                 <p className="text-sm text-gray-600">{music.releaseDate.getFullYear()}</p>
                             </div>
-                            <p className="text-lg font-semibold">{music.title}</p>
+                            <p className="text-lg font-semibold text-right">{music.title}</p>
                         </div>
                     </div>
                 </div>

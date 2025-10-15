@@ -29,7 +29,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
     const [albumId, setAlbumId] = useState<string | null>(null);
     const [coverUrl, setCoverUrl] = useState<string | null>(null);
     const [album, setAlbum] = useState<Album | null>(null);
-    const { confirm } = useMessage();
+    const { confirm, messageBoxOpened } = useMessage();
 
     const createMusicDrawerRef = React.useRef<CreateMusicDrawerRef>(null);
     const editAlbumDrawerRef = React.useRef<EditAlbumDrawerRef>(null);
@@ -55,6 +55,10 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
         }
 
         if (editAlbumDrawerRef.current?.opened) {
+            return;
+        }
+
+        if (messageBoxOpened) {
             return;
         }
 

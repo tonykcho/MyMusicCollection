@@ -79,7 +79,7 @@ export default function Albums() {
                                 <p className="text-sm text-gray-600">{album.artist}</p>
                                 <p className="text-sm text-gray-600">{album.releaseDate.getFullYear()}</p>
                             </div>
-                            <p className="text-lg font-semibold">{album.title}</p>
+                            <p className="text-lg font-semibold text-right">{album.title}</p>
                         </div>
                     </div>
                 </div>

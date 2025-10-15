@@ -26,7 +26,7 @@ const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProp
     const [musicId, setMusicId] = useState<string | null>(null);
     const [coverUrl, setCoverUrl] = useState<string | null>(null);
     const [music, setMusic] = useState<Music | null>(null);
-    const { confirm } = useMessage();
+    const { messageBoxOpened, confirm } = useMessage();
 
     const editMusicDrawerRef = React.useRef<EditMusicDrawerRef>(null);
 
@@ -43,6 +43,10 @@ const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProp
 
     function closeDrawer() {
         if (editMusicDrawerRef.current?.opened) {
+            return;
+        }
+
+        if (messageBoxOpened) {
             return;
         }
 

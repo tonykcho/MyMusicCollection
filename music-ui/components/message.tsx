@@ -4,6 +4,7 @@ import React from "react";
 import { FaN, FaY } from "react-icons/fa6";
 
 interface MessageContextProps {
+    messageBoxOpened: boolean;
     confirm: (message: string) => Promise<boolean>;
     showMessage: (message: string) => void;
     hideMessage: () => void;
@@ -23,6 +24,8 @@ export function useMessage() {
 export function MessageProvider({ children }: { children: React.ReactNode }) {
     const [message, setMessage] = React.useState<string | null>(null);
     const resolveRef = React.useRef<(value: boolean) => void | null>(null);
+
+    const messageBoxOpened = !!message;
 
     const confirm = (msg: string) => {
         setMessage(msg);
@@ -69,7 +72,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     }, [message]);
 
     return (
-        <MessageContext.Provider value={{ confirm, showMessage, hideMessage }}>
+        <MessageContext.Provider value={{ messageBoxOpened, confirm, showMessage, hideMessage }}>
             {children}
             {message && (
                 <div className="fixed z-2000 h-full w-full top-0 left-0 flex items-center justify-center bg-gray-900/60 transition-colors duration-400" onClick={handleNo}>
