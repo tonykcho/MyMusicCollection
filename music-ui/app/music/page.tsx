@@ -8,6 +8,7 @@ import { Music } from "@/models/music";
 import { FaPlus } from "react-icons/fa6";
 import AlbumService from "@/services/album-service";
 import MusicDetailDrawer, { MusicDetailDrawerRef } from "./components/music-detail-drawer";
+import { Badge } from "@mantine/core";
 
 const PAGE_SIZE = 20;
 
@@ -75,15 +76,12 @@ export default function MusicPage() {
         return (
             <div className="flex flex-col items-center" key={music.id}>
                 <div onClick={() => musicDetailDrawerRef.current?.openDrawer(music.id, music.coverUrl)} className="p-1 w-60 h-60 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform">
-                    <div style={{ backgroundImage: music.coverUrl != null ? `url(${music.coverUrl})` : undefined, backgroundSize: 'cover' }} className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
-                        <div className="flex-1"></div>
-                        <div className="flex items-end">
-                            <div className="flex-1 flex flex-col">
-                                <p className="text-sm text-gray-600">{music.artist}</p>
-                                <p className="text-sm text-gray-600">{music.releaseDate.getFullYear()}</p>
-                            </div>
-                            <p className="text-lg font-semibold text-right">{music.title}</p>
-                        </div>
+                    <div
+                        style={{ backgroundImage: music.coverUrl != null ? `url(${music.coverUrl})` : undefined, backgroundSize: 'cover' }}
+                        className="relative p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
+                        <Badge size="xs" color="gray" className="absolute top-2 left-2">{music.releaseDate.getFullYear()}</Badge>
+                        <Badge autoContrast size="xs" color="red" className="absolute left-2 bottom-8">{music.artist}</Badge>
+                        <Badge autoContrast size="xs" color="lime" className="absolute left-2 bottom-2">{music.title}</Badge>
                     </div>
                 </div>
             </div>

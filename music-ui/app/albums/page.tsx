@@ -7,6 +7,7 @@ import React, { useEffect } from "react";
 import CreateAlbumDrawer, { CreateAlbumDrawerRef } from "./components/create-album-drawer";
 import AlbumDetailDrawer, { AlbumDetailDrawerRef } from "./components/album-detail-drawer";
 import { FaPlus } from "react-icons/fa6";
+import { Badge } from "@mantine/core";
 
 const PAGE_SIZE = 20;
 
@@ -72,15 +73,13 @@ export default function Albums() {
         return (
             <div className="flex flex-col items-center" key={album.id}>
                 <div className="w-60 h-60 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform">
-                    <div onClick={() => albumDetailDrawerRef.current?.openDrawer(album.id, album.coverUrl)} style={{ backgroundImage: album.coverUrl != null ? `url(${album.coverUrl})` : undefined, backgroundSize: 'cover' }} className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
-                        <div className="flex-1"></div>
-                        <div className="flex items-end">
-                            <div className="flex-1 flex flex-col">
-                                <p className="text-sm text-gray-600">{album.artist}</p>
-                                <p className="text-sm text-gray-600">{album.releaseDate.getFullYear()}</p>
-                            </div>
-                            <p className="text-lg font-semibold text-right">{album.title}</p>
-                        </div>
+                    <div
+                        onClick={() => albumDetailDrawerRef.current?.openDrawer(album.id, album.coverUrl)}
+                        style={{ backgroundImage: album.coverUrl != null ? `url(${album.coverUrl})` : undefined, backgroundSize: 'cover' }}
+                        className="relative p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
+                        <Badge size="xs" color="gray" className="absolute top-2 left-2">{album.releaseDate.getFullYear()}</Badge>
+                        <Badge autoContrast size="xs" color="red" className="absolute left-2 bottom-8">{album.artist}</Badge>
+                        <Badge autoContrast size="xs" color="lime" className="absolute left-2 bottom-2">{album.title}</Badge>
                     </div>
                 </div>
             </div>
