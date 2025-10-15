@@ -28,6 +28,12 @@ public class DeleteAlbumHandler : IApiRequestHandler<DeleteAlbumRequest>
             return new NotFoundApiResult($"Album with ID {request.AlbumId} not found");
         }
 
+        _dbContext.Entry(album).Collection(album => album.Musics).Load();
+        foreach (var music in album.Musics)
+        {
+            _dbContext.Musics.Remove(music);
+        }
+
         _dbContext.Albums.Remove(album);
         await _dbContext.SaveChangesAsync(cancellationToken);
 

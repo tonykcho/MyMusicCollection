@@ -31,6 +31,11 @@ body {
   @apply flex items-center justify-center p-2 rounded-full cursor-pointer w-12 h-12;
 }
 
+.action-button-sm
+{
+  @apply flex items-center justify-center p-1 rounded-full cursor-pointer w-6 h-6;
+}
+
 .mantine-Drawer-body {
   height: 100%;
 }

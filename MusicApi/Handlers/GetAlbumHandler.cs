@@ -24,13 +24,18 @@ public class GetAlbumHandler : IApiRequestHandler<GetAlbumRequest>
     {
         var album = await _dbContext.Albums
             .Where(album => album.IsDeleted == false)
-            .Include(album => album.Musics)
             .SingleOrDefaultAsync(album => album.Id == request.AlbumId, cancellationToken);
 
         if (album == null)
         {
             return new NotFoundApiResult($"Album with ID {request.AlbumId} not found");
         }
+
+        _dbContext.Entry(album)
+            .Collection(a => a.Musics)
+            .Query()
+            .Where(music => music.IsDeleted == false)
+            .Load();
 
         var dto = AlbumMapper.MapToDto(album);
 

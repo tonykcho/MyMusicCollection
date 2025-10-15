@@ -19,18 +19,22 @@ export default function MusicPage() {
     });
 
     function RenderMusic(music: Music) {
-        return (<div className="p-1 w-1/5 h-68 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform" key={music.id}>
-            <div className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
-                <div className="flex-1"></div>
-                <div className="flex items-end">
-                    <div className="flex-1 flex flex-col">
-                        <p className="text-sm text-gray-600">{music.artist}</p>
-                        <p className="text-sm text-gray-600">{music.releaseDate.getFullYear()}</p>
+        return (
+            <div className="flex flex-col items-center" key={music.id}>
+                <div className="p-1 w-60 h-60 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform">
+                    <div className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
+                        <div className="flex-1"></div>
+                        <div className="flex items-end">
+                            <div className="flex-1 flex flex-col">
+                                <p className="text-sm text-gray-600">{music.artist}</p>
+                                <p className="text-sm text-gray-600">{music.releaseDate.getFullYear()}</p>
+                            </div>
+                            <p className="text-lg font-semibold">{music.title}</p>
+                        </div>
                     </div>
-                    <p className="text-lg font-semibold">{music.title}</p>
                 </div>
             </div>
-        </div>);
+        );
     }
 
     if (musicQuery.isLoading) {
@@ -51,7 +55,7 @@ export default function MusicPage() {
 
     return (
         <>
-            <div className='flex flex-row flex-wrap overflow-y-auto p-2'>
+            <div className='grid' style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
                 {musicQuery.data?.map((music: Music) => (
                     RenderMusic(music)
                 ))}

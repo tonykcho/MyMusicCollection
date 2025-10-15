@@ -10,6 +10,8 @@ import React from "react";
 import CreateMusicDrawer, { CreateMusicDrawerRef } from "@/app/music/components/create-music-drawer";
 import { FaTrashCan, FaPlus } from "react-icons/fa6"
 import { useMessage } from "@/components/message";
+import MusicService from "@/services/music-service";
+import { Music } from "@/models/music";
 
 export interface AlbumDetailDrawerRef {
     openDrawer: (id: string, coverUrl?: string | null) => void;
@@ -46,12 +48,20 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
         close();
     }
 
-    async function onAlbumDeleted() {
-        const confirmed = await confirm("Are you sure you want to delete this album?");
+    async function onAlbumDeleted(album: Album) {
+        const confirmed = await confirm(`Are you sure you want to delete ${album.title}?`);
         if (confirmed) {
-            await AlbumService.deleteAlbum(albumId!);
+            await AlbumService.deleteAlbum(album.id);
             props.onAlbumDeleted();
             closeDrawer();
+        }
+    }
+
+    async function onMusicDeleted(music: Music) {
+        const confirmed = await confirm(`Are you sure you want to delete ${music.title}?`);
+        if (confirmed) {
+            await MusicService.deleteMusic(music.id);
+            query.refetch();
         }
     }
 
@@ -92,17 +102,20 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
                     <div className="flex-1 flex flex-col overflow-y-auto mt-2 rounded-lg">
                         <div className="flex-1 flex flex-col ">
                             {album?.musics.map((music, index) => (
-                                <div key={music.id} className="flex flex-row items-center hover:bg-gray-100 mt-2 py-1 rounded-md">
+                                <div key={music.id} className="flex flex-row items-center hover:bg-gray-100 mt-2 py-1 pe-4 rounded-md">
                                     <p className="text-md flex-[0_0_30]">{index + 1}.</p>
                                     <p className="text-md flex-1">{music.title}</p>
                                     <p className="text-md flex-[0_0_100] text-right">{music.releaseDate.getFullYear()}</p>
+                                    <button onClick={() => onMusicDeleted(music)} className="action-button-sm bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors ml-4" title="Delete Music">
+                                        <FaTrashCan size={12} />
+                                    </button>
                                 </div>
                             ))}
                         </div>
                     </div>
 
                     <div className="flex items-center justify-between mt-4">
-                        <button onClick={() => onAlbumDeleted()} className="action-button bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors" title="Delete Album">
+                        <button onClick={() => onAlbumDeleted(album!)} className="action-button bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors" title="Delete Album">
                             <FaTrashCan size={20} />
                         </button>
                         <button onClick={() => createMusicDrawerRef.current?.openDrawer(album)} className="action-button bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">

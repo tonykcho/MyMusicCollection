@@ -25,4 +25,14 @@ export default class MusicService {
             throw new Error('Failed to create music');
         }
     }
+
+    static async deleteMusic(musicId: string) {
+        const response = await fetch(`${this.baseUrl}/${musicId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete music');
+        }
+    }
 }
