@@ -34,4 +34,15 @@ public class ImageStorageService
 
         return uniqueFileName;
     }
+
+    public async Task DeleteImageAsync(string filename)
+    {
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+        var filePath = Path.Combine(uploadsFolder, filename);
+
+        if (File.Exists(filePath))
+        {
+            await Task.Run(() => File.Delete(filePath));
+        }
+    }
 }

@@ -47,3 +47,9 @@ export interface CreateAlbumDto {
     releaseDate: string;
     coverImage?: File;
 }
+
+export interface UpdateAlbumDto {
+    title: string;
+    artist: string;
+    releaseDate: string;
+}

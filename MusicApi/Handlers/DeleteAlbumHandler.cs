@@ -1,6 +1,8 @@
+using System.Transactions;
 using Microsoft.EntityFrameworkCore;
 using MusicApi.Abstracts;
 using MusicApi.DbContexts;
+using MusicApi.Services;
 
 namespace MusicApi.Handlers;
 
@@ -12,10 +14,12 @@ public class DeleteAlbumRequest : IApiRequest
 public class DeleteAlbumHandler : IApiRequestHandler<DeleteAlbumRequest>
 {
     private readonly AppDbContext _dbContext;
+    private readonly ImageStorageService _imageStorageService;
 
-    public DeleteAlbumHandler(AppDbContext dbContext)
+    public DeleteAlbumHandler(AppDbContext dbContext, ImageStorageService imageStorageService)
     {
         _dbContext = dbContext;
+        _imageStorageService = imageStorageService;
     }
 
     public async Task<IApiResult> HandleAsync(DeleteAlbumRequest request, CancellationToken cancellationToken)
@@ -28,14 +32,25 @@ public class DeleteAlbumHandler : IApiRequestHandler<DeleteAlbumRequest>
             return new NotFoundApiResult($"Album with ID {request.AlbumId} not found");
         }
 
-        _dbContext.Entry(album).Collection(album => album.Musics).Load();
-        foreach (var music in album.Musics)
+        using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
-            _dbContext.Musics.Remove(music);
-        }
 
-        _dbContext.Albums.Remove(album);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+            _dbContext.Entry(album).Collection(album => album.Musics).Load();
+            foreach (var music in album.Musics)
+            {
+                _dbContext.Musics.Remove(music);
+            }
+
+            if (album.CoverImagePath != null)
+            {
+                await _imageStorageService.DeleteImageAsync(album.CoverImagePath);
+            }
+
+            _dbContext.Albums.Remove(album);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            scope.Complete();
+        }
 
         return new NoContentApiResult();
     }

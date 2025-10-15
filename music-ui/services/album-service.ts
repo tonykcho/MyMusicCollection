@@ -1,4 +1,4 @@
-import { Album, AlbumDto, CreateAlbumDto } from "@/models/album";
+import { Album, AlbumDto, CreateAlbumDto, UpdateAlbumDto } from "@/models/album";
 
 export default class AlbumService {
     static baseUrl = 'https://localhost:7279/api/albums';
@@ -44,6 +44,19 @@ export default class AlbumService {
         });
         if (!response.ok) {
             throw new Error('Failed to create album');
+        }
+    }
+
+    static async updateAlbum(albumId: string, albumData: UpdateAlbumDto) {
+        const response = await fetch(`${this.baseUrl}/${albumId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(albumData)
+        });
+        if (!response.ok) {
+            throw new Error('Failed to update album');
         }
     }
 

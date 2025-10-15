@@ -118,7 +118,10 @@ export default function Albums() {
 
             <CreateAlbumDrawer ref={createAlbumDrawerRef} onAlbumCreated={() => { albumsQuery.refetch(); }} />
 
-            <AlbumDetailDrawer ref={albumDetailDrawerRef} onAlbumDeleted={() => { albumsQuery.refetch(); }} />
+            <AlbumDetailDrawer
+                ref={albumDetailDrawerRef}
+                onAlbumDeleted={() => { albumsQuery.refetch(); }}
+                onAlbumEdited={() => { albumsQuery.refetch(); }} />
         </>
     );
 }

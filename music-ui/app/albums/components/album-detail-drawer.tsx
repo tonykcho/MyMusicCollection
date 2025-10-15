@@ -8,17 +8,19 @@ import { useQuery } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import React from "react";
 import CreateMusicDrawer, { CreateMusicDrawerRef } from "@/app/music/components/create-music-drawer";
-import { FaTrashCan, FaPlus } from "react-icons/fa6"
+import { FaTrashCan, FaPlus, FaPen } from "react-icons/fa6"
 import { useMessage } from "@/components/message";
 import MusicService from "@/services/music-service";
 import { Music } from "@/models/music";
+import EditAlbumDrawer, { EditAlbumDrawerRef } from "./edit-album-drawer";
 
 export interface AlbumDetailDrawerRef {
     openDrawer: (id: string, coverUrl?: string | null) => void;
 }
 
 export interface AlbumDetailDrawerProps {
-    onAlbumDeleted: () => void
+    onAlbumEdited: () => void;
+    onAlbumDeleted: () => void;
 }
 
 const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProps>((props, ref) => {
@@ -29,6 +31,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
     const { confirm } = useMessage();
 
     const createMusicDrawerRef = React.useRef<CreateMusicDrawerRef>(null);
+    const editAlbumDrawerRef = React.useRef<EditAlbumDrawerRef>(null);
 
     useImperativeHandle(ref, () => ({
         openDrawer: openDrawer,
@@ -95,8 +98,11 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
                         <p className="text-lg mt-2 flex-1">{album?.getDateString()}</p>
                     </div>
 
-                    <div className="flex flex-row items-center mt-2">
+                    <div className="flex flex-row items-center justify-between mt-3 pe-4">
                         <p className="font-bold text-lg">Music List</p>
+                        <button onClick={() => createMusicDrawerRef.current?.openDrawer(album)} className="action-button-sm bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">
+                            <FaPlus size={12} />
+                        </button>
                     </div>
 
                     <div className="flex-1 flex flex-col overflow-y-auto mt-2 rounded-lg">
@@ -118,14 +124,16 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
                         <button onClick={() => onAlbumDeleted(album!)} className="action-button bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors" title="Delete Album">
                             <FaTrashCan size={20} />
                         </button>
-                        <button onClick={() => createMusicDrawerRef.current?.openDrawer(album)} className="action-button bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">
-                            <FaPlus size={20} />
+
+                        <button onClick={() => editAlbumDrawerRef.current?.openDrawer(album!)} className="action-button bg-amber-400 text-white hover:scale-105 hover:bg-amber-500 transition-colors" title="Edit Album">
+                            <FaPen size={20} />
                         </button>
                     </div>
                 </div>
             </Drawer>
 
             <CreateMusicDrawer ref={createMusicDrawerRef} onMusicCreated={() => { query.refetch(); }} />
+            <EditAlbumDrawer ref={editAlbumDrawerRef} onAlbumEdited={() => { query.refetch(); props.onAlbumEdited(); }} />
         </>
     )
 });
