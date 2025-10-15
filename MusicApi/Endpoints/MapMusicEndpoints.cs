@@ -54,6 +54,21 @@ public static class MapMusicEndpoints
         .WithDescription("Creates a new music entry in the collection.")
         .Produces<CreatedResult>(StatusCodes.Status201Created);
 
+        musicGroup.MapPut("/{id:guid}", async (Guid id, [FromBody] UpdateMusicRequest request, ApiRequestPipeline apiRequestPipeline) =>
+        {
+            request.MusicId = id;
+
+            var result = await apiRequestPipeline.RunPipeLineAsync(request, new CancellationToken());
+
+            return result.MapToResult();
+        })
+        .WithName("UpdateMusic")
+        .WithSummary("Update a music entry")
+        .WithDescription("Updates an existing music entry in the collection.")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status400BadRequest)
+        .Produces(StatusCodes.Status404NotFound);
+
         musicGroup.MapDelete("/{musicId:guid}", async ([FromRoute] Guid musicId, ApiRequestPipeline apiRequestPipeline) =>
         {
             var request = new DeleteMusicRequest { MusicId = musicId };

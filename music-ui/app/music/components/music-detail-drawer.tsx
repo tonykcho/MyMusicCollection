@@ -6,8 +6,10 @@ import MusicService from "@/services/music-service";
 import { Drawer, Image } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
+import React from "react";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { FaPen, FaTrashCan } from "react-icons/fa6";
+import EditMusicDrawer, { EditMusicDrawerRef } from "./edit-music-drawer";
 
 export interface MusicDetailDrawerRef {
     opened: boolean;
@@ -26,6 +28,8 @@ const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProp
     const [music, setMusic] = useState<Music | null>(null);
     const { confirm } = useMessage();
 
+    const editMusicDrawerRef = React.useRef<EditMusicDrawerRef>(null);
+
     useImperativeHandle(ref, () => ({
         opened: opened,
         openDrawer: openDrawer,
@@ -38,6 +42,10 @@ const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProp
     }
 
     function closeDrawer() {
+        if (editMusicDrawerRef.current?.opened) {
+            return;
+        }
+
         close();
     }
 
@@ -89,12 +97,14 @@ const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProp
                             <FaTrashCan size={20} />
                         </button>
 
-                        <button className="action-button bg-amber-400 text-white hover:scale-105 hover:bg-amber-500 transition-colors" title="Edit Album">
+                        <button onClick={() => editMusicDrawerRef.current?.openDrawer(music!)} className="action-button bg-amber-400 text-white hover:scale-105 hover:bg-amber-500 transition-colors" title="Edit Album">
                             <FaPen size={20} />
                         </button>
                     </div>
                 </div>
             </Drawer>
+
+            <EditMusicDrawer ref={editMusicDrawerRef} onMusicEdited={() => { props.onMusicEdited(); query.refetch() }} />
         </>
     )
 });

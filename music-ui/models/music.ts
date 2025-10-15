@@ -42,3 +42,9 @@ export interface CreateMusicDto {
     releaseDate: string; // ISO date string
     albumId: string | null;
 }
+
+export interface UpdateMusicDto {
+    title: string;
+    artist: string;
+    releaseDate: string; // ISO date string
+}

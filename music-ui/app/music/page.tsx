@@ -122,7 +122,7 @@ export default function MusicPage() {
             <MusicDetailDrawer
                 ref={musicDetailDrawerRef}
                 onMusicDeleted={() => { musicQuery.refetch(); }}
-                onMusicEdited={() => { }} />
+                onMusicEdited={() => { musicQuery.refetch() }} />
         </>
     );
 }

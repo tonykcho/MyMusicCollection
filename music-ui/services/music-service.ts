@@ -1,4 +1,4 @@
-import { CreateMusicDto, Music, MusicDto } from "@/models/music";
+import { CreateMusicDto, Music, MusicDto, UpdateMusicDto } from "@/models/music";
 
 export default class MusicService {
     static baseUrl = 'https://localhost:7279/api/music';
@@ -32,6 +32,20 @@ export default class MusicService {
 
         if (!response.ok) {
             throw new Error('Failed to create music');
+        }
+    }
+
+    static async updateMusic(musicId: string, musicData: UpdateMusicDto) {
+        const response = await fetch(`${this.baseUrl}/${musicId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(musicData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update music');
         }
     }
 
