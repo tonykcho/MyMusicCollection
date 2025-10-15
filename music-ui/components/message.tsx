@@ -72,8 +72,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         <MessageContext.Provider value={{ confirm, showMessage, hideMessage }}>
             {children}
             {message && (
-                <div className="fixed z-2000 h-full w-full top-0 left-0 flex items-center justify-center bg-gray-500/10" onClick={handleNo}>
-                    <div onClick={(e) => e.stopPropagation()} className="text-lg flex flex-col w-120 h-60 bg-white text-black px-4 py-4 rounded-xl border border-gray-300 shadow-lg">
+                <div className="fixed z-2000 h-full w-full top-0 left-0 flex items-center justify-center bg-gray-900/60 transition-colors duration-400" onClick={handleNo}>
+                    <div onClick={(e) => e.stopPropagation()} className="text-lg flex flex-col w-120 h-60 bg-white text-black px-4 py-4 rounded-xl border border-gray-300 shadow-lg animate-[zoomIn_0.2s_ease-out_forwards]">
                         <p className="flex-1 p-2">{message}</p>
                         <div className="flex justify-between mt-4">
                             <button onClick={handleNo} className="action-button bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors">
