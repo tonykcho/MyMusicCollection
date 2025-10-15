@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MusicApi.Abstracts;
 using MusicApi.DbContexts;
@@ -32,8 +33,31 @@ public class GetMusicsHandler : IApiRequestHandler<GetMusicsRequest>
 
         var musicDtos = musics.Select(MusicMapper.MapToDto).ToList();
 
+        await LoadMusicCover(musicDtos);
+
         var result = new ContentApiResult<List<MusicDto>>(musicDtos);
 
         return result;
+    }
+
+    private async Task LoadMusicCover(List<MusicDto> musicDtos)
+    {
+        IList<Guid> albumIds = musicDtos
+            .Where(music => music.AlbumId.HasValue)
+            .Select(music => music.AlbumId!.Value)
+            .Distinct()
+            .ToList();
+
+        IDictionary<Guid, bool> albumCoverMap = await _dbContext.Albums
+            .Where(album => albumIds.Contains(album.Id))
+            .ToDictionaryAsync(album => album.Id, album => album.CoverImagePath != null);
+
+        foreach (var music in musicDtos)
+        {
+            if (music.AlbumId.HasValue && albumCoverMap.TryGetValue(music.AlbumId.Value, out bool hasCoverImage))
+            {
+                music.HasCoverImage = hasCoverImage;
+            }
+        }
     }
 }

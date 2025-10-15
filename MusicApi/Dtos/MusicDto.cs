@@ -4,9 +4,10 @@ namespace MusicApi.Dtos;
 
 public class MusicDto
 {
-    public Guid Id { get; init; }
-    public string Title { get; init; } = string.Empty;
-    public string Artist { get; init; } = string.Empty;
-    public DateTimeOffset ReleaseDate { get; init; }
-    public Guid? AlbumId { get; init; }
+    public Guid Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Artist { get; set; } = string.Empty;
+    public DateTimeOffset ReleaseDate { get; set; }
+    public bool HasCoverImage { get; set; } = false;
+    public Guid? AlbumId { get; set; }
 }
