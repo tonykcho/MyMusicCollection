@@ -64,7 +64,10 @@ const EditMusicDrawer = forwardRef<EditMusicDrawerRef, EditMusicDrawerProps>((pr
 
     return (
         <Drawer size="md" opened={opened} onClose={close} withCloseButton={false} position="right" padding="xl">
-            <form onSubmit={form.onSubmit(onSave)} className="flex flex-col h-full">
+            <div className="flex flex-row items-center px-4 h-15 bg-amber-500 fixed top-0 right-0 left-0">
+                <p className="text-white text-lg font-bold">Edit Music</p>
+            </div>
+            <form onSubmit={form.onSubmit(onSave)} className="flex flex-col h-full pt-10">
                 <TextInput
                     label="Title"
                     placeholder="Enter music title"

@@ -63,7 +63,10 @@ const CreateAlbumDrawer = forwardRef<CreateAlbumDrawerRef, CreateAlbumDrawerProp
 
     return (
         <Drawer size="md" opened={opened} onClose={close} withCloseButton={false} position="right" padding="xl">
-            <form onSubmit={form.onSubmit(submitAlbum)} className="flex flex-col h-full">
+            <div className="flex flex-row items-center px-4 h-15 bg-amber-500 fixed top-0 right-0 left-0">
+                <p className="text-white text-lg font-bold">Create Album</p>
+            </div>
+            <form onSubmit={form.onSubmit(submitAlbum)} className="flex flex-col h-full pt-10">
                 <TextInput
                     className="mb-3"
                     label="Title"

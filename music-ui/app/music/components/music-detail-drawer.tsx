@@ -74,7 +74,10 @@ const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProp
     return (
         <>
             <Drawer size="md" opened={opened} onClose={closeDrawer} withCloseButton={false} position="right" padding="xl">
-                <div className="flex flex-col h-full p-1">
+                <div className="flex flex-row items-center px-4 h-15 bg-red-400 fixed top-0 right-0 left-0">
+                    <p className="text-white text-lg font-bold">{music?.title}</p>
+                </div>
+                <div className="flex flex-col h-full p-1 pt-10">
                     <Image className="self-center border" radius="md" src={music?.coverUrl} w={250} h={250} alt={music?.title} />
                     <div className="flex flex-row mt-4">
                         <p className="text-lg mt-2 flex-[0_0_140]">Title:</p>

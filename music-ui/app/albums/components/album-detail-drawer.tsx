@@ -128,7 +128,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
         return (
             <>
                 <div className="flex-1 flex flex-col p-2">
-                    <div className="flex flex-row items-center justify-between mt-3 pe-4 pb-2 border-b border-gray-300">
+                    <div className="flex flex-row items-center justify-between pe-4 pb-2 border-b border-gray-300">
                         <p className="font-bold text-lg">Music List</p>
                         <button onClick={() => createMusicDrawerRef.current?.openDrawer(album)} className="action-button-sm bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">
                             <FaPlus size={12} />
@@ -157,7 +157,10 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
     return (
         <>
             <Drawer size="xl" opened={opened} onClose={closeDrawer} withCloseButton={false} position="right" padding="xl">
-                <div className="flex flex-row h-full">
+                <div className="flex flex-row items-center px-4 h-15 bg-red-400 fixed top-0 right-0 left-0">
+                    <p className="text-white text-lg font-bold">{album?.title}</p>
+                </div>
+                <div className="flex flex-row h-full pt-10">
                     {renderAlbumDetail()}
                     {renderMusicList()}
                 </div>
