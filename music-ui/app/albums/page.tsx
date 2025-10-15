@@ -76,10 +76,10 @@ export default function Albums() {
                     <div
                         onClick={() => albumDetailDrawerRef.current?.openDrawer(album.id, album.coverUrl)}
                         style={{ backgroundImage: album.coverUrl != null ? `url(${album.coverUrl})` : undefined, backgroundSize: 'cover' }}
-                        className="relative p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
+                        className="relative p-4 flex flex-col flex-1 border border-gray-300 rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
                         <Badge size="xs" color="gray" className="absolute top-2 left-2">{album.releaseDate.getFullYear()}</Badge>
-                        <Badge autoContrast size="xs" color="red" className="absolute left-2 bottom-8">{album.artist}</Badge>
-                        <Badge autoContrast size="xs" color="lime" className="absolute left-2 bottom-2">{album.title}</Badge>
+                        <Badge autoContrast size="xs" color="lime" className="absolute left-2 bottom-8">{album.artist}</Badge>
+                        <Badge autoContrast size="xs" color="red" className="absolute left-2 bottom-2">{album.title}</Badge>
                     </div>
                 </div>
             </div>

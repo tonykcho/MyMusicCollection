@@ -39,13 +39,13 @@ export default function RootLayout({
             <MessageProvider>
               <AppShell header={{ height: 60 }} padding="md">
                 <AppShell.Header>
-                  <div className='flex flex-row items-center px-8 h-full bg-[#b197fc]  text-[#343a40]'>
+                  <div className='px-12 flex text-white flex-row items-center px-8 h-full bg-[#a187ec]  text-[#343a40]'>
                     <p className='text-lg font-semibold flex-1'>Music Collections</p>
-                    <button>
-                      <a href='albums'>Albums</a>
+                    <button className='font-bold'>
+                      <a className='font-bold' href='albums'>Albums</a>
                     </button>
                     <button className='ps-4'>
-                      <a href='music'>Music</a>
+                      <a className='font-bold' href='music'>Music</a>
                     </button>
                   </div>
                 </AppShell.Header>
