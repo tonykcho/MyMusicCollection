@@ -23,6 +23,7 @@ public class GetAlbumsHandler : IApiRequestHandler<GetAlbumsRequest>
     {
         var albums = await _dbContext.Albums
             .Where(album => album.IsDeleted == false)
+            .OrderBy(album => album.Artist)
             .Skip(request.Offset)
             .Take(request.Limit)
             .ToListAsync(cancellationToken);

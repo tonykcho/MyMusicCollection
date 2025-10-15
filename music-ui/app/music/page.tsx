@@ -1,22 +1,51 @@
 'use client';
 
-import React from "react";
+import React, { useEffect } from "react";
 import CreateMusicDrawer, { CreateMusicDrawerRef } from "./components/create-music-drawer";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import MusicService from "@/services/music-service";
 import { Music } from "@/models/music";
 import { FaPlus } from "react-icons/fa6";
 
+const PAGE_SIZE = 20;
+
 export default function MusicPage() {
     const createMusicDrawerRef = React.useRef<CreateMusicDrawerRef>(null);
 
-    const musicQuery = useQuery({
-        queryKey: ['music'],
-        queryFn: async () => {
-            const musics = await MusicService.getMusics();
+    const musicQuery = useInfiniteQuery({
+        queryKey: ['musics'],
+        queryFn: async ({ pageParam = 0 }) => {
+            const musics = await MusicService.getMusics(pageParam * PAGE_SIZE, PAGE_SIZE);
             return musics;
+        },
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages) => {
+            if (lastPage.length === 0) {
+                return undefined; // No more pages
+            }
+            return allPages.length; // Next page index
         }
-    });
+    })
+
+    const loaderRef = React.useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (!loaderRef.current) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                musicQuery.fetchNextPage();
+            }
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 1.0
+        });
+
+        observer.observe(loaderRef.current);
+        return () => observer.disconnect();
+    }, [musicQuery.hasNextPage, musicQuery.fetchNextPage]);
+
+    const musics: Music[] = musicQuery.data?.pages.flatMap(page => page) || [];
 
     function RenderMusic(music: Music) {
         return (
@@ -56,7 +85,7 @@ export default function MusicPage() {
     return (
         <>
             <div className='grid' style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
-                {musicQuery.data?.map((music: Music) => (
+                {musics.map((music: Music) => (
                     RenderMusic(music)
                 ))}
                 <button onClick={() => createMusicDrawerRef.current?.openDrawer()} className="action-button fixed bottom-8 right-8 bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">

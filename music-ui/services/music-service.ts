@@ -3,8 +3,8 @@ import { CreateMusicDto, Music, MusicDto } from "@/models/music";
 export default class MusicService {
     static baseUrl = 'https://localhost:7279/api/music';
 
-    static async getMusics() {
-        const response = await fetch(this.baseUrl);
+    static async getMusics(offset: number = 0, limit: number = 20) {
+        const response = await fetch(`${this.baseUrl}?offset=${offset}&limit=${limit}`);
         if (!response.ok) {
             throw new Error('Failed to fetch music');
         }

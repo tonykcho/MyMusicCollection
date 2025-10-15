@@ -9,7 +9,8 @@ namespace MusicApi.Handlers;
 
 public class GetMusicsRequest : IApiRequest
 {
-
+    public int Offset { get; set; } = 0;
+    public int Limit { get; set; } = 20;
 }
 
 public class GetMusicsHandler : IApiRequestHandler<GetMusicsRequest>
@@ -24,6 +25,9 @@ public class GetMusicsHandler : IApiRequestHandler<GetMusicsRequest>
     {
         var musics = await _dbContext.Musics
             .Where(music => music.IsDeleted == false)
+            .OrderBy(music => music.Artist)
+            .Skip(request.Offset)
+            .Take(request.Limit)
             .ToListAsync();
 
         var musicDtos = musics.Select(MusicMapper.MapToDto).ToList();
