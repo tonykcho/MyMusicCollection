@@ -22,6 +22,7 @@ public class GetAlbumsHandler : IApiRequestHandler<GetAlbumsRequest>
     public async Task<IApiResult> HandleAsync(GetAlbumsRequest request, CancellationToken cancellationToken)
     {
         var albums = await _dbContext.Albums
+            .Where(album => album.IsDeleted == false)
             .Skip(request.Offset)
             .Take(request.Limit)
             .ToListAsync(cancellationToken);

@@ -23,6 +23,7 @@ public class GetMusicsHandler : IApiRequestHandler<GetMusicsRequest>
     public async Task<IApiResult> HandleAsync(GetMusicsRequest request, CancellationToken cancellationToken)
     {
         var musics = await _dbContext.Musics
+            .Where(music => music.IsDeleted == false)
             .ToListAsync();
 
         var musicDtos = musics.Select(MusicMapper.MapToDto).ToList();

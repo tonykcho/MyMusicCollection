@@ -55,5 +55,18 @@ public static class MapAlbumEndpoints
         .WithSummary("Create a new album entry")
         .WithDescription("Creates a new album entry in the collection.")
         .Produces<CreatedResult>(StatusCodes.Status201Created);
+
+        albumGroup.MapDelete("/{id:guid}", async (Guid id, ApiRequestPipeline apiRequestPipeline) =>
+        {
+            var request = new DeleteAlbumRequest { AlbumId = id };
+            var result = await apiRequestPipeline.RunPipeLineAsync(request, new CancellationToken());
+
+            return result.MapToResult();
+        })
+        .WithName("DeleteAlbum")
+        .WithSummary("Delete an album by ID")
+        .WithDescription("Deletes a specific album by its unique ID.")
+        .Produces<NoContentResult>(StatusCodes.Status204NoContent)
+        .Produces<NotFoundObjectResult>(StatusCodes.Status404NotFound);
     }
 }

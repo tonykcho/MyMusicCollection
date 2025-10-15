@@ -22,6 +22,7 @@ public class GetAlbumCoverImageHandler : IApiRequestHandler<GetAlbumCoverImageRe
     public async Task<IApiResult> HandleAsync(GetAlbumCoverImageRequest request, CancellationToken cancellationToken)
     {
         var album = await _dbContext.Albums
+            .Where(album => album.IsDeleted == false)
             .SingleOrDefaultAsync(a => a.Id == request.AlbumId, cancellationToken);
 
         if (album == null || string.IsNullOrEmpty(album.CoverImagePath))

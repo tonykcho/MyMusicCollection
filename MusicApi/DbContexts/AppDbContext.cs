@@ -49,6 +49,11 @@ public class AppDbContext : DbContext
                 case EntityState.Modified:
                     entry.Entity.UpdatedAt = DateTimeOffset.UtcNow;
                     break;
+                case EntityState.Deleted:
+                    entry.State = EntityState.Modified;
+                    entry.Entity.IsDeleted = true;
+                    entry.Entity.DeletedAt = DateTimeOffset.UtcNow;
+                    break;
             }
         }
 

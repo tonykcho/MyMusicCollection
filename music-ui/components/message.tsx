@@ -55,11 +55,24 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         setMessage(null);
     };
 
+    // Listen to Escape key to close the message
+    React.useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && message) {
+                handleNo();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [message]);
+
     return (
         <MessageContext.Provider value={{ confirm, showMessage, hideMessage }}>
             {children}
             {message && (
-                <div className="fixed z-1000 h-full w-full top-0 left-0 flex items-center justify-center bg-gray-500/10" onClick={handleNo}>
+                <div className="fixed z-2000 h-full w-full top-0 left-0 flex items-center justify-center bg-gray-500/10" onClick={handleNo}>
                     <div onClick={(e) => e.stopPropagation()} className="text-lg flex flex-col w-120 h-60 bg-white text-black px-4 py-4 rounded-xl border border-gray-300 shadow-lg">
                         <p className="flex-1">{message}</p>
                         <div className="flex justify-between mt-4">

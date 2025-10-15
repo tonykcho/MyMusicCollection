@@ -15,7 +15,11 @@ export interface AlbumDetailDrawerRef {
     openDrawer: (id: string, coverUrl?: string | null) => void;
 }
 
-const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef>((props, ref) => {
+export interface AlbumDetailDrawerProps {
+    onAlbumDeleted: () => void
+}
+
+const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProps>((props, ref) => {
     const [opened, { open, close }] = useDisclosure(false);
     const [albumId, setAlbumId] = useState<string | null>(null);
     const [coverUrl, setCoverUrl] = useState<string | null>(null);
@@ -45,7 +49,9 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef>((props, ref) => {
     async function onAlbumDeleted() {
         const confirmed = await confirm("Are you sure you want to delete this album?");
         if (confirmed) {
-            console.log("Album deleted");
+            await AlbumService.deleteAlbum(albumId!);
+            props.onAlbumDeleted();
+            closeDrawer();
         }
     }
 

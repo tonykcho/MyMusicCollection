@@ -46,4 +46,13 @@ export default class AlbumService {
             throw new Error('Failed to create album');
         }
     }
+
+    static async deleteAlbum(albumId: string) {
+        const response = await fetch(`${this.baseUrl}/${albumId}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            throw new Error('Failed to delete album');
+        }
+    }
 }

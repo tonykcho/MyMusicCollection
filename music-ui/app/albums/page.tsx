@@ -69,18 +69,22 @@ export default function Albums() {
     function RenderAlbum(album: Album) {
         const coverUrl = coverUrls[album.id];
         album.coverUrl = coverUrl;
-        return (<div className="p-1 w-1/5 h-68 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform" key={album.id}>
-            <div onClick={() => albumDetailDrawerRef.current?.openDrawer(album.id, album.coverUrl)} style={{ backgroundImage: album.coverUrl != null ? `url(${album.coverUrl})` : undefined, backgroundSize: 'cover' }} className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
-                <div className="flex-1"></div>
-                <div className="flex items-end">
-                    <div className="flex-1 flex flex-col">
-                        <p className="text-sm text-gray-600">{album.artist}</p>
-                        <p className="text-sm text-gray-600">{album.releaseDate.getFullYear()}</p>
+        return (
+            <div className="flex flex-col items-center" key={album.id}>
+                <div className="w-60 h-60 p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform">
+                    <div onClick={() => albumDetailDrawerRef.current?.openDrawer(album.id, album.coverUrl)} style={{ backgroundImage: album.coverUrl != null ? `url(${album.coverUrl})` : undefined, backgroundSize: 'cover' }} className="p-4 flex flex-col flex-1 border rounded-lg shadow-md hover:bg-gray-100 flex flex-col">
+                        <div className="flex-1"></div>
+                        <div className="flex items-end">
+                            <div className="flex-1 flex flex-col">
+                                <p className="text-sm text-gray-600">{album.artist}</p>
+                                <p className="text-sm text-gray-600">{album.releaseDate.getFullYear()}</p>
+                            </div>
+                            <p className="text-lg font-semibold">{album.title}</p>
+                        </div>
                     </div>
-                    <p className="text-lg font-semibold">{album.title}</p>
                 </div>
             </div>
-        </div>);
+        );
     }
 
     if (albumsQuery.isLoading) {
@@ -101,19 +105,20 @@ export default function Albums() {
 
     return (
         <>
-            <div className='flex flex-row flex-wrap overflow-y-auto p-2'>
+            <div className='grid' style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
                 {albums.map((album: Album) => (
                     RenderAlbum(album)
                 ))}
                 <div ref={loaderRef} style={{ height: 1 }} />
-                <button onClick={() => createAlbumDrawerRef.current?.openDrawer()} className="action-button fixed bottom-8 right-8 bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">
-                    <FaPlus size={20} />
-                </button>
             </div>
+
+            <button onClick={() => createAlbumDrawerRef.current?.openDrawer()} className="action-button fixed bottom-8 right-8 bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">
+                <FaPlus size={20} />
+            </button>
 
             <CreateAlbumDrawer ref={createAlbumDrawerRef} onAlbumCreated={() => { albumsQuery.refetch(); }} />
 
-            <AlbumDetailDrawer ref={albumDetailDrawerRef} />
+            <AlbumDetailDrawer ref={albumDetailDrawerRef} onAlbumDeleted={() => { albumsQuery.refetch(); }} />
         </>
     );
 }
