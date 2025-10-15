@@ -2,7 +2,7 @@
 
 import { Album } from "@/models/album";
 import AlbumService from "@/services/album-service";
-import { Drawer, Image } from "@mantine/core";
+import { Drawer, DrawerHeader, Image } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle, useState } from "react";
@@ -54,6 +54,10 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
             return;
         }
 
+        if (editAlbumDrawerRef.current?.opened) {
+            return;
+        }
+
         close();
     }
 
@@ -86,10 +90,10 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
         enabled: !!albumId
     });
 
-    return (
-        <>
-            <Drawer size="md" opened={opened} onClose={closeDrawer} withCloseButton={false} position="right" padding="xl">
-                <div className="flex flex-col h-full p-1">
+    function renderAlbumDetail() {
+        return (
+            <>
+                <div className="flex-1 flex flex-col h-full p-2">
                     <Image className="self-center border" radius="md" src={album?.coverUrl} w={250} h={250} alt={album?.title} />
                     <div className="flex flex-row mt-4">
                         <p className="text-lg mt-2 flex-[0_0_140]">Title:</p>
@@ -104,27 +108,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
                         <p className="text-lg mt-2 flex-1">{album?.getDateString()}</p>
                     </div>
 
-                    <div className="flex flex-row items-center justify-between mt-3 pe-4">
-                        <p className="font-bold text-lg">Music List</p>
-                        <button onClick={() => createMusicDrawerRef.current?.openDrawer(album)} className="action-button-sm bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">
-                            <FaPlus size={12} />
-                        </button>
-                    </div>
-
-                    <div className="flex-1 flex flex-col overflow-y-auto mt-2 rounded-lg">
-                        <div className="flex-1 flex flex-col ">
-                            {album?.musics.map((music, index) => (
-                                <div onClick={() => musicDetailDrawerRef.current?.openDrawer(music.id, album.coverUrl)} key={music.id} className="flex flex-row items-center hover:bg-gray-100 mt-2 py-1 pe-4 rounded-md">
-                                    <p className="text-md flex-[0_0_30]">{index + 1}.</p>
-                                    <p className="text-md flex-1">{music.title}</p>
-                                    <p className="text-md flex-[0_0_100] text-right">{music.releaseDate.getFullYear()}</p>
-                                    <button onClick={() => onMusicDeleted(music)} className="action-button-sm bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors ml-4" title="Delete Music">
-                                        <FaTrashCan size={12} />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <div className="flex-1"></div>
 
                     <div className="flex items-center justify-between mt-4">
                         <button onClick={() => onAlbumDeleted(album!)} className="action-button bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors" title="Delete Album">
@@ -135,6 +119,47 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
                             <FaPen size={20} />
                         </button>
                     </div>
+                </div>
+            </>
+        )
+    }
+
+    function renderMusicList() {
+        return (
+            <>
+                <div className="flex-1 flex flex-col p-2">
+                    <div className="flex flex-row items-center justify-between mt-3 pe-4 pb-2 border-b border-gray-300">
+                        <p className="font-bold text-lg">Music List</p>
+                        <button onClick={() => createMusicDrawerRef.current?.openDrawer(album)} className="action-button-sm bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">
+                            <FaPlus size={12} />
+                        </button>
+                    </div>
+
+                    <div className="flex-1 flex flex-col overflow-y-auto mt-2 rounded-lg">
+                        <div className="flex-1 flex flex-col ">
+                            {album?.musics.map((music, index) => (
+                                <div onClick={() => musicDetailDrawerRef.current?.openDrawer(music.id, album.coverUrl)} key={music.id} className="flex flex-row items-center hover:bg-gray-100 mt-2 py-1 ps-2 pe-4 rounded-md">
+                                    <p className="text-md flex-[0_0_30]">{index + 1}.</p>
+                                    <p className="text-md flex-1 text-overflow-ellipsis">{music.title}</p>
+                                    <p className="text-md flex-[0_0_100] text-right">{music.releaseDate.getFullYear()}</p>
+                                    <button onClick={(e) => { e.stopPropagation(); onMusicDeleted(music) }} className="action-button-sm bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors ml-4" title="Delete Music">
+                                        <FaTrashCan size={12} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </>
+        )
+    }
+
+    return (
+        <>
+            <Drawer size="xl" opened={opened} onClose={closeDrawer} withCloseButton={false} position="right" padding="xl">
+                <div className="flex flex-row h-full">
+                    {renderAlbumDetail()}
+                    {renderMusicList()}
                 </div>
             </Drawer>
 

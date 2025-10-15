@@ -9,6 +9,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { forwardRef, useImperativeHandle } from "react";
 
 export interface EditAlbumDrawerRef {
+    opened: boolean;
     openDrawer: (album: Album) => void;
 }
 
@@ -35,6 +36,7 @@ const EditAlbumDrawer = forwardRef<EditAlbumDrawerRef, EditAlbumDrawerProps>((pr
     })
 
     useImperativeHandle(ref, () => ({
+        opened: opened,
         openDrawer: openDrawer,
     }));
 
