@@ -27,6 +27,8 @@ public class GetMusicsHandler : IApiRequestHandler<GetMusicsRequest>
         var musics = await _dbContext.Musics
             .Where(music => music.IsDeleted == false)
             .OrderBy(music => music.Artist)
+            .ThenBy(music => music.AlbumId)
+            .ThenBy(music => music.CreatedAt)
             .Skip(request.Offset)
             .Take(request.Limit)
             .ToListAsync();
