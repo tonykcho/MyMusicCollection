@@ -35,6 +35,7 @@ public class GetAlbumHandler : IApiRequestHandler<GetAlbumRequest>
             .Collection(a => a.Musics)
             .Query()
             .Where(music => music.IsDeleted == false)
+            .OrderBy(music => music.CreatedAt)
             .Load();
 
         var dto = AlbumMapper.MapToDto(album);

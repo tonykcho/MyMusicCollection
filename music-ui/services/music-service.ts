@@ -35,6 +35,26 @@ export default class MusicService {
         }
     }
 
+    static async setFavorite(musicId: string) {
+        const response = await fetch(`${this.baseUrl}/${musicId}/favorite`, {
+            method: 'POST',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to toggle favorite status');
+        }
+    }
+
+    static async unsetFavorite(musicId: string) {
+        const response = await fetch(`${this.baseUrl}/${musicId}/unfavorite`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to unset favorite status');
+        }
+    }
+
     static async updateMusic(musicId: string, musicData: UpdateMusicDto) {
         const response = await fetch(`${this.baseUrl}/${musicId}`, {
             method: 'PUT',

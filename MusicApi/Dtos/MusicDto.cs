@@ -10,4 +10,5 @@ public class MusicDto
     public DateTimeOffset ReleaseDate { get; set; }
     public bool HasCoverImage { get; set; } = false;
     public Guid? AlbumId { get; set; }
+    public bool IsFavorite { get; set; } = false;
 }

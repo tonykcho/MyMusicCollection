@@ -5,6 +5,7 @@ export interface MusicDto {
     releaseDate: string; // ISO date string
     hasCoverImage: boolean;
     albumId: string;
+    isFavorite: boolean;
 }
 
 export class Music {
@@ -15,6 +16,7 @@ export class Music {
     hasCoverImage: boolean;
     albumId: string;
     coverUrl: string | null = null;
+    isFavorite: boolean;
 
     constructor(dto: MusicDto) {
         this.id = dto.id;
@@ -23,6 +25,7 @@ export class Music {
         this.releaseDate = new Date(dto.releaseDate);
         this.hasCoverImage = dto.hasCoverImage;
         this.albumId = dto.albumId;
+        this.isFavorite = dto.isFavorite;
     }
 
     getDateString(): string {

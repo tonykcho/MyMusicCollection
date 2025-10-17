@@ -5,7 +5,7 @@ import CreateMusicDrawer, { CreateMusicDrawerRef } from "./components/create-mus
 import { useInfiniteQuery, useQueries, useQuery } from "@tanstack/react-query";
 import MusicService from "@/services/music-service";
 import { Music } from "@/models/music";
-import { FaPlus } from "react-icons/fa6";
+import { FaPlus, FaHeart } from "react-icons/fa6";
 import AlbumService from "@/services/album-service";
 import MusicDetailDrawer, { MusicDetailDrawerRef } from "./components/music-detail-drawer";
 import { Badge } from "@mantine/core";
@@ -82,6 +82,9 @@ export default function MusicPage() {
                         <Badge size="xs" color="gray" className="absolute top-2 left-2">{music.releaseDate.getFullYear()}</Badge>
                         <Badge autoContrast size="xs" color="red" className="absolute left-2 bottom-8">{music.artist}</Badge>
                         <Badge autoContrast size="xs" color="lime" className="absolute left-2 bottom-2">{music.title}</Badge>
+                        {(music.isFavorite) && <button className="absolute right-1 top-1 action-button-sm bg-pink-400 text-white" title="Add to Favorites">
+                            <FaHeart fill="red" size={12} />
+                        </button>}
                     </div>
                 </div>
             </div>

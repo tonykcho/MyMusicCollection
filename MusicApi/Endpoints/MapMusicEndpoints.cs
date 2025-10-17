@@ -54,6 +54,32 @@ public static class MapMusicEndpoints
         .WithDescription("Creates a new music entry in the collection.")
         .Produces<CreatedResult>(StatusCodes.Status201Created);
 
+        musicGroup.MapPost("{musicId:guid}/favorite", async ([FromRoute] Guid musicId, ApiRequestPipeline apiRequestPipeline) =>
+        {
+            var request = new SetFavoriteMusicRequest { MusicId = musicId };
+            var result = await apiRequestPipeline.RunPipeLineAsync(request, new CancellationToken());
+
+            return result.MapToResult();
+        })
+        .WithName("SetFavoriteMusic")
+        .WithSummary("Set a music entry as favorite")
+        .WithDescription("Marks a music entry as favorite.")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound);
+
+        musicGroup.MapPost("{musicId:guid}/unfavorite", async ([FromRoute] Guid musicId, ApiRequestPipeline apiRequestPipeline) =>
+        {
+            var request = new UnsetFavoriteMusicRequest { MusicId = musicId };
+            var result = await apiRequestPipeline.RunPipeLineAsync(request, new CancellationToken());
+
+            return result.MapToResult();
+        })
+        .WithName("UnsetFavoriteMusic")
+        .WithSummary("Unset a music entry as favorite")
+        .WithDescription("Remove favorite mark from a music entry.")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound);
+
         musicGroup.MapPut("/{id:guid}", async (Guid id, [FromBody] UpdateMusicRequest request, ApiRequestPipeline apiRequestPipeline) =>
         {
             request.MusicId = id;

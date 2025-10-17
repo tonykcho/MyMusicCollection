@@ -13,7 +13,8 @@ public class MusicMapper
             Title = music.Title,
             Artist = music.Artist,
             ReleaseDate = music.ReleaseDate,
-            AlbumId = music.AlbumId
+            AlbumId = music.AlbumId,
+            IsFavorite = music.IsFavorite
         };
     }
 }

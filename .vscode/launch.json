@@ -28,7 +28,7 @@
                 "dev"
             ],
             "env": {
-                "BASE_URL": "http://localhost:5550"
+                "NEXT_PUBLIC_BASE_URL": "http://localhost:5550"
             },
         }
     ]

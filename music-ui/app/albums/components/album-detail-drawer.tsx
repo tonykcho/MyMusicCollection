@@ -2,13 +2,13 @@
 
 import { Album } from "@/models/album";
 import AlbumService from "@/services/album-service";
-import { Drawer, DrawerHeader, Image } from "@mantine/core";
+import { Drawer, DrawerHeader, Image, Switch } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import React from "react";
 import CreateMusicDrawer, { CreateMusicDrawerRef } from "@/app/music/components/create-music-drawer";
-import { FaTrashCan, FaPlus, FaPen } from "react-icons/fa6"
+import { FaTrashCan, FaPlus, FaPen, FaHeart } from "react-icons/fa6"
 import { useMessage } from "@/components/message";
 import MusicService from "@/services/music-service";
 import { Music } from "@/models/music";
@@ -97,7 +97,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
     function renderAlbumDetail() {
         return (
             <>
-                <div className="flex-1 flex flex-col h-full p-2">
+                <div className="flex-2 flex flex-col h-full p-2">
                     <Image className="self-center border" radius="md" src={album?.coverUrl} w={250} h={250} alt={album?.title} />
                     <div className="flex flex-row mt-4">
                         <p className="text-lg mt-2 flex-[0_0_140]">Title:</p>
@@ -131,7 +131,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
     function renderMusicList() {
         return (
             <>
-                <div className="flex-1 flex flex-col p-2">
+                <div className="flex-3 flex flex-col p-2">
                     <div className="flex flex-row items-center justify-between pe-4 pb-2 border-b border-gray-300">
                         <p className="font-bold text-lg">Music List</p>
                         <button onClick={() => createMusicDrawerRef.current?.openDrawer(album)} className="action-button-sm bg-purple-400 text-white hover:scale-105 hover:bg-purple-500 transition-colors">
@@ -143,10 +143,17 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
                         <div className="flex-1 flex flex-col ">
                             {album?.musics.map((music, index) => (
                                 <div onClick={() => musicDetailDrawerRef.current?.openDrawer(music.id, album.coverUrl)} key={music.id} className="flex flex-row items-center hover:bg-gray-100 mt-2 py-1 ps-2 pe-4 rounded-md">
-                                    <p className="text-md flex-[0_0_30]">{index + 1}.</p>
-                                    <p className="text-md flex-1 text-overflow-ellipsis">{music.title}</p>
-                                    <p className="text-md flex-[0_0_100] text-right">{music.releaseDate.getFullYear()}</p>
-                                    <button onClick={(e) => { e.stopPropagation(); onMusicDeleted(music) }} className="action-button-sm bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors ml-4" title="Delete Music">
+                                    <p className="text-sm flex-[0_0_30]">{index + 1}.</p>
+                                    <p className="text-sm flex-1 text-overflow-ellipsis">{music.title}</p>
+                                    <p className="text-sm flex-[0_0_100] text-right">{music.releaseDate.getFullYear()}</p>
+                                    <Switch
+                                        className="ml-4"
+                                        checked={music?.isFavorite}
+                                        size="md"
+                                        color="pink"
+                                        thumbIcon={music?.isFavorite ? <FaHeart fill="red" size={12} /> : <FaHeart fill="red" size={12} />}
+                                    ></Switch>
+                                    <button onClick={(e) => { e.stopPropagation(); onMusicDeleted(music) }} className="action-button-sm bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors ml-2" title="Delete Music">
                                         <FaTrashCan size={12} />
                                     </button>
                                 </div>
@@ -160,7 +167,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
 
     return (
         <>
-            <Drawer size="xl" opened={opened} onClose={closeDrawer} withCloseButton={false} position="right" padding="xl">
+            <Drawer size="60%" opened={opened} onClose={closeDrawer} withCloseButton={false} position="right" padding="xl">
                 <div className="flex flex-row items-center px-4 h-15 bg-red-400 fixed top-0 right-0 left-0">
                     <p className="text-white text-lg font-bold">{album?.title}</p>
                 </div>

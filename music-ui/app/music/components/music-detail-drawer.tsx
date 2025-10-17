@@ -3,12 +3,12 @@
 import { useMessage } from "@/components/message";
 import { Music } from "@/models/music";
 import MusicService from "@/services/music-service";
-import { Drawer, Image } from "@mantine/core";
+import { Drawer, Image, Switch } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { FaPen, FaTrashCan } from "react-icons/fa6";
+import { FaHeart, FaPen, FaTrashCan } from "react-icons/fa6";
 import EditMusicDrawer, { EditMusicDrawerRef } from "./edit-music-drawer";
 
 export interface MusicDetailDrawerRef {
@@ -74,6 +74,16 @@ const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProp
         }
     }
 
+    async function toggleMusicAsFavorite(music: Music) {
+        if (music.isFavorite == false) {
+            await MusicService.setFavorite(music.id);
+        }
+        else {
+            await MusicService.unsetFavorite(music.id);
+        }
+        props.onMusicEdited();
+        query.refetch();
+    }
 
     return (
         <>
@@ -99,10 +109,22 @@ const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProp
                     <div className="flex-1"></div>
 
 
-                    <div className="flex items-center justify-between mt-4">
-                        <button onClick={() => onMusicDeleted(music!)} className="action-button bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors" title="Delete Music">
+                    <div className="flex items-center mt-4">
+                        <button onClick={() => onMusicDeleted(music!)} className=" action-button bg-red-400 text-white hover:scale-105 hover:bg-red-500 transition-colors" title="Delete Music">
                             <FaTrashCan size={20} />
                         </button>
+
+                        <div className="flex-1"></div>
+
+                        <Switch
+                            className="me-6 scale-125"
+                            checked={music?.isFavorite}
+                            onChange={async () => { await toggleMusicAsFavorite(music!); }}
+                            size="xl"
+                            color="pink"
+                            thumbIcon={music?.isFavorite ? <FaHeart fill="red" size={12} /> : <FaHeart fill="red" size={12} />}
+                        ></Switch>
+
 
                         <button onClick={() => editMusicDrawerRef.current?.openDrawer(music!)} className="action-button bg-amber-400 text-white hover:scale-105 hover:bg-amber-500 transition-colors" title="Edit Album">
                             <FaPen size={20} />
