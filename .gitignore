@@ -37,6 +37,7 @@ msbuild.wrn
 logs/
 uploads/
 images/
+traefik-logs/
 MyNet6Demo.Api/firebase_credential.json
 firebase_credential.json
 secrets.json
