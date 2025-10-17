@@ -1,0 +1,66 @@
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: MyMusicCollection
+    ports:
+      - 5432
+    volumes:
+      - music_postgres_data:/var/lib/postgresql/data
+  music-api:
+    build:
+      context: ./MusicApi
+      dockerfile: Dockerfile
+    ports:
+      - 5550
+    environment:
+      - ASPNETCORE_URLS=http://+:5550
+    depends_on:
+      - postgres
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.music-api.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.music-api.entrypoints=music-api"
+      - "traefik.http.services.music-api.loadbalancer.server.port=5550"
+
+  music-ui:
+    build:
+      context: ./music-ui
+      dockerfile: Dockerfile
+    ports:
+      - 5501
+    depends_on:
+      - music-api
+    environment:
+      - PORT=5501
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.music-ui.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.music-ui.entrypoints=music-ui"
+      - "traefik.http.services.music-ui.loadbalancer.server.port=5501"
+    restart: unless-stopped
+
+  traefik:
+    image: traefik
+    command:
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker"
+      - "--log.level=DEBUG"
+      - "--entrypoints.music-api.address=:5550"
+      - "--entrypoints.music-ui.address=:5501"
+      - "--accesslog=true"
+      - "--accesslog.filepath=/var/log/access.log"
+    ports:
+      - "8080:8080" # Dashboard
+      - "5501:5501" # Music UI
+      - "5550:5550" # Music API
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "./traefik-logs:/var/log" # Mount a directory for log files
+    restart: unless-stopped
+
+volumes:
+  music_postgres_data:

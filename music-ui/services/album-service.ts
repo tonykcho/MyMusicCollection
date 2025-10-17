@@ -1,7 +1,7 @@
 import { Album, AlbumDto, CreateAlbumDto, UpdateAlbumDto } from "@/models/album";
 
 export default class AlbumService {
-    static baseUrl = 'https://localhost:7279/api/albums';
+    static baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/albums`;
 
     static async getAlbums(offset: number = 0, limit: number = 20) {
         const response = await fetch(`${this.baseUrl}?offset=${offset}&limit=${limit}`);

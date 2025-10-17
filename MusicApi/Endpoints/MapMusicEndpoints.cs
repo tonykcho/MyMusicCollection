@@ -12,7 +12,7 @@ public static class MapMusicEndpoints
         var musicGroup = app.MapGroup("/api/music")
             .WithTags("Music API");
 
-        musicGroup.MapGet("/", ([FromQuery] int offset, [FromQuery] int limit, ApiRequestPipeline apiRequestPipeline) =>
+        musicGroup.MapGet("/", (ApiRequestPipeline apiRequestPipeline, [FromQuery] int offset = 0, [FromQuery] int limit = 20) =>
         {
             var request = new GetMusicsRequest
             {

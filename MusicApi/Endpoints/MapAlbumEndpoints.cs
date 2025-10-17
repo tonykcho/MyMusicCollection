@@ -11,7 +11,7 @@ public static class MapAlbumEndpoints
         var albumGroup = app.MapGroup("/api/albums")
             .WithTags("Album API");
 
-        albumGroup.MapGet("/", async ([FromQuery] int offset, [FromQuery] int limit, ApiRequestPipeline apiRequestPipeline) =>
+        albumGroup.MapGet("/", async (ApiRequestPipeline apiRequestPipeline, [FromQuery] int offset = 0, [FromQuery] int limit = 20) =>
         {
             var request = new GetAlbumsRequest { Offset = offset, Limit = limit };
             var result = await apiRequestPipeline.RunPipeLineAsync(request, new CancellationToken());

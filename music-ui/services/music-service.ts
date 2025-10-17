@@ -1,7 +1,7 @@
 import { CreateMusicDto, Music, MusicDto, UpdateMusicDto } from "@/models/music";
 
 export default class MusicService {
-    static baseUrl = 'https://localhost:7279/api/music';
+    static baseUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/music`;
 
     static async getMusics(offset: number = 0, limit: number = 20) {
         const response = await fetch(`${this.baseUrl}?offset=${offset}&limit=${limit}`);
