@@ -6,7 +6,6 @@ RUN npm install
 COPY . .
 ENV NEXT_PUBLIC_BASE_URL=http://localhost:5550
 RUN npm run build
-RUN npm prune --production
 EXPOSE 5501
 
 # Run nextjs app
