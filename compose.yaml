@@ -21,6 +21,7 @@ services:
       - ASPNETCORE_URLS=http://+:5550
     depends_on:
       - postgres
+      - music-api-migrate
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.music-api.rule=PathPrefix(`/`)"
@@ -33,12 +34,12 @@ services:
   music-api-migrate:
     build:
       context: ./MusicApi
-      dockerfile: Dockerfile
-    command: ["dotnet", "ef", "database update"]
+      dockerfile: Dockerfile.migrate
     depends_on:
       - postgres
     environment:
       - ASPNETCORE_URLS=http://+:5550
+      - ConnectionStrings__DefaultConnection=Server=postgres;Database=MyMusicCollection;User Id=postgres;Password=postgres;
     networks:
       - traefik-net
 
