@@ -11,6 +11,12 @@ services:
       - music_postgres_data:/var/lib/postgresql/data
     networks:
       - traefik-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   music-api:
     build:
       context: ./MusicApi

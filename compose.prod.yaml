@@ -11,6 +11,12 @@ services:
       - music_postgres_data:/var/lib/postgresql/data
     networks:
       - traefik-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   music-api:
     image: ghcr.io/tonykcho/music-api:latest
     ports:
@@ -35,6 +41,8 @@ services:
       - postgres
     environment:
       - ConnectionStrings__DefaultConnection=Server=${POSTGRES_HOST:-postgres};Database=MyMusicCollection;User Id=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres};
+    networks:
+      - traefik-net
 
   music-ui:
     image: ghcr.io/tonykcho/music-ui:latest
