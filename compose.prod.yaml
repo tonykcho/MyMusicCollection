@@ -8,7 +8,7 @@ services:
     ports:
       - 5432
     volumes:
-      - music_postgres_data:/var/lib/postgresql/data
+      - music_postgres_data:/var/lib/postgresql
     networks:
       - traefik-net
     healthcheck:
