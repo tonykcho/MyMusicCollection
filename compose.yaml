@@ -26,8 +26,10 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:5550
     depends_on:
-      - postgres
-      - music-api-migrate
+      postgres:
+        condition: service_healthy
+      music-api-migrate:
+        condition: service_completed_successfully
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.music-api.rule=PathPrefix(`/`)"
@@ -42,7 +44,8 @@ services:
       context: ./MusicApi
       dockerfile: Dockerfile.migrate
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       - ConnectionStrings__DefaultConnection=Server=${POSTGRES_HOST:-postgres};Database=MyMusicCollection;User Id=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres};
     networks:

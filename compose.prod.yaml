@@ -40,7 +40,8 @@ services:
   music-api-migrate:
     image: ghcr.io/tonykcho/music-api-migrate:latest
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       - ConnectionStrings__DefaultConnection=Server=${POSTGRES_HOST:-postgres};Database=MyMusicCollection;User Id=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres};
     networks:
