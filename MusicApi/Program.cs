@@ -14,8 +14,6 @@ builder
 
 var app = builder.Build();
 
-app.MapApiEndpoints();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -25,5 +23,7 @@ if (app.Environment.IsDevelopment())
 // app.UseHttpsRedirection();
 app.UseCors();
 app.UseAntiforgery();
+
+app.MapApiEndpoints();
 
 app.Run();
