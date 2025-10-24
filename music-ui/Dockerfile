@@ -4,7 +4,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-ENV NEXT_PUBLIC_BASE_URL=http://localhost:5550
+
+ARG NEXT_PUBLIC_BASE_URL=http://localhost:5550
+ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
 RUN npm run build
 EXPOSE 5501
 
