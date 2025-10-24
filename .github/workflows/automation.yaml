@@ -90,6 +90,7 @@ jobs:
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
+            --build-arg NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }} \
             -t ghcr.io/tonykcho/music-ui:latest \
             -f music-ui/Dockerfile \
             --push ./music-ui
