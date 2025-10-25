@@ -35,6 +35,7 @@ services:
       - "traefik.http.routers.music-api.rule=PathPrefix(`/`)"
       - "traefik.http.routers.music-api.entrypoints=music-api"
       - "traefik.http.services.music-api.loadbalancer.server.port=5550"
+      - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - traefik-net
     restart: unless-stopped
@@ -50,6 +51,8 @@ services:
       - ConnectionStrings__DefaultConnection=Server=${POSTGRES_HOST:-postgres};Database=MyMusicCollection;User Id=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres};
     networks:
       - traefik-net
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   music-ui:
     build:
@@ -68,6 +71,7 @@ services:
       - "traefik.http.routers.music-ui.rule=PathPrefix(`/`)"
       - "traefik.http.routers.music-ui.entrypoints=music-ui"
       - "traefik.http.services.music-ui.loadbalancer.server.port=5501"
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
     networks:
       - traefik-net
@@ -90,6 +94,15 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - "./traefik-logs:/var/log" # Mount a directory for log files
+    restart: unless-stopped
+    networks:
+      - traefik-net
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --cleanup --interval 300
     restart: unless-stopped
     networks:
       - traefik-net
