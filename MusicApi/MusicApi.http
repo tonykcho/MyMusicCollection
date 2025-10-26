@@ -1,5 +1,7 @@
 ### Get Music
-@MusicApi_HostAddress = http://localhost:5191
+@MusicApi_HostAddress = http://localhost:5550
+@BasicAuth_Username = user
+@BasicAuth_Password = password123
 
 GET {{MusicApi_HostAddress}}/api/music
 Accept: application/json
@@ -7,6 +9,8 @@ Accept: application/json
 ### Create Music
 POST {{MusicApi_HostAddress}}/api/music
 Content-Type: application/json
+Headers:
+Authorization: Basic {{BasicAuth_Username}}:{{BasicAuth_Password}}
 
 {
     "Title": "Memory2",

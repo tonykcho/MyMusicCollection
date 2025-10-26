@@ -7,9 +7,11 @@ builder.Services.AddAntiforgery();
 
 builder
     .AddLogging()
+    .AddAuthentication()
     .AddServices()
     .AddRequestHandlers()
     .AddValidators()
+    .AddRateLimiter()
     .AddCors();
 
 var app = builder.Build();
@@ -22,6 +24,10 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 app.UseCors();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseAntiforgery();
 
 app.MapApiEndpoints();
