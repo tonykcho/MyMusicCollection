@@ -12,7 +12,7 @@ services:
     networks:
       - traefik-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -36,6 +36,8 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - traefik-net
+    volumes:
+      - music_api_images:/app/uploads
     restart: unless-stopped
 
   music-api-migrate:
@@ -101,6 +103,8 @@ services:
 
 volumes:
   music_postgres_data:
+  music_api_images:
+
 
 networks:
   traefik-net:
