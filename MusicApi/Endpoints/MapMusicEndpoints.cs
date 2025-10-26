@@ -48,6 +48,7 @@ public static class MapMusicEndpoints
 
             return result.MapToResult();
         })
+        .RequireAuthorization()
         .DisableAntiforgery()
         .WithName("CreateMusic")
         .WithSummary("Create a new music entry")
@@ -61,6 +62,7 @@ public static class MapMusicEndpoints
 
             return result.MapToResult();
         })
+        .RequireAuthorization()
         .WithName("SetFavoriteMusic")
         .WithSummary("Set a music entry as favorite")
         .WithDescription("Marks a music entry as favorite.")
@@ -74,6 +76,7 @@ public static class MapMusicEndpoints
 
             return result.MapToResult();
         })
+        .RequireAuthorization()
         .WithName("UnsetFavoriteMusic")
         .WithSummary("Unset a music entry as favorite")
         .WithDescription("Remove favorite mark from a music entry.")
@@ -88,6 +91,7 @@ public static class MapMusicEndpoints
 
             return result.MapToResult();
         })
+        .RequireAuthorization()
         .WithName("UpdateMusic")
         .WithSummary("Update a music entry")
         .WithDescription("Updates an existing music entry in the collection.")
@@ -102,6 +106,7 @@ public static class MapMusicEndpoints
 
             return result.MapToResult();
         })
+        .RequireAuthorization()
         .WithName("DeleteMusic")
         .WithSummary("Delete a music entry")
         .WithDescription("Deletes a music entry from the collection.")

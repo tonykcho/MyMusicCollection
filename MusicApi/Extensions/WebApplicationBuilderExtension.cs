@@ -1,6 +1,9 @@
 using System.Reflection;
+using System.Threading.RateLimiting;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using MusicApi.Abstracts;
 using MusicApi.DbContexts;
 using MusicApi.Services;
@@ -73,6 +76,34 @@ public static class WebApplicationBuilderExtension
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });
+        });
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddAuthentication(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddAuthentication("BasicAuthentication")
+            .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+        builder.Services.AddAuthorization();
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddRateLimiter(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.AddFixedWindowLimiter("Fixed", config =>
+            {
+                config.PermitLimit = 20;
+                config.Window = TimeSpan.FromSeconds(1);
+                config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                config.QueueLimit = 5;
+            });
+
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
         });
 
         return builder;

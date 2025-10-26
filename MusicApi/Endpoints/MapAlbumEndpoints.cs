@@ -50,6 +50,7 @@ public static class MapAlbumEndpoints
 
             return result.MapToResult();
         })
+        .RequireAuthorization()
         .DisableAntiforgery()
         .WithName("CreateAlbum")
         .WithSummary("Create a new album entry")
@@ -64,6 +65,7 @@ public static class MapAlbumEndpoints
 
             return result.MapToResult();
         })
+        .RequireAuthorization()
         .WithName("UpdateAlbum")
         .WithSummary("Update an existing album")
         .WithDescription("Updates the details of an existing album in the collection.")
@@ -78,6 +80,7 @@ public static class MapAlbumEndpoints
 
             return result.MapToResult();
         })
+        .RequireAuthorization()
         .WithName("DeleteAlbum")
         .WithSummary("Delete an album by ID")
         .WithDescription("Deletes a specific album by its unique ID.")
