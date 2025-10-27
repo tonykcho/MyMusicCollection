@@ -1,6 +1,7 @@
 'use client'
 
 import { useErrorMessage } from "@/components/error-message";
+import { CreateAlbumDto } from "@/models/album";
 import AlbumService from "@/services/album-service";
 import { Drawer, FileInput, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
@@ -40,7 +41,7 @@ const CreateAlbumDrawer = forwardRef<CreateAlbumDrawerRef, CreateAlbumDrawerProp
     })
 
     const { mutate: createAlbum } = useMutation({
-        mutationFn: (albumData: { title: string; artist: string; releaseDate: string; coverImage?: File }) =>
+        mutationFn: (albumData: CreateAlbumDto) =>
             AlbumService.createAlbum(albumData),
         onSuccess: () =>
         {
@@ -66,7 +67,7 @@ const CreateAlbumDrawer = forwardRef<CreateAlbumDrawerRef, CreateAlbumDrawerProp
 
     async function submitAlbum(values: typeof form.values)
     {
-        const albumData = {
+        const albumData: CreateAlbumDto = {
             title: values.title,
             artist: values.artist,
             releaseDate: values.releaseDate ?? '',

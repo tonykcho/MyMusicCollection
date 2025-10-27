@@ -1,4 +1,5 @@
 import { CreateMusicDto, Music, MusicDto, UpdateMusicDto } from "@/models/music";
+import AuthService from "./auth-service";
 
 export default class MusicService
 {
@@ -31,7 +32,8 @@ export default class MusicService
         const response = await fetch(this.baseUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': AuthService.getBasicAuthHeader()
             },
             body: JSON.stringify(musicData)
         });
@@ -46,6 +48,9 @@ export default class MusicService
     {
         const response = await fetch(`${this.baseUrl}/${musicId}/favorite`, {
             method: 'POST',
+            headers: {
+                'Authorization': AuthService.getBasicAuthHeader()
+            }
         });
 
         if (!response.ok)
@@ -57,7 +62,10 @@ export default class MusicService
     static async unsetFavorite(musicId: string)
     {
         const response = await fetch(`${this.baseUrl}/${musicId}/unfavorite`, {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'Authorization': AuthService.getBasicAuthHeader()
+            }
         });
 
         if (!response.ok)
@@ -71,7 +79,8 @@ export default class MusicService
         const response = await fetch(`${this.baseUrl}/${musicId}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': AuthService.getBasicAuthHeader()
             },
             body: JSON.stringify(musicData)
         });
@@ -85,7 +94,10 @@ export default class MusicService
     static async deleteMusic(musicId: string)
     {
         const response = await fetch(`${this.baseUrl}/${musicId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': AuthService.getBasicAuthHeader()
+            }
         });
 
         if (!response.ok)

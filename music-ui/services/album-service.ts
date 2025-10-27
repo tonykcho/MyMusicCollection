@@ -1,4 +1,5 @@
 import { Album, AlbumDto, CreateAlbumDto, UpdateAlbumDto } from "@/models/album";
+import AuthService from "./auth-service";
 
 export default class AlbumService
 {
@@ -47,9 +48,14 @@ export default class AlbumService
             formData.append('CoverImage', albumData.coverImage);
         }
 
+        console.log('Authorization', AuthService.getBasicAuthHeader());
+
         const response = await fetch(this.baseUrl, {
             method: 'POST',
-            body: formData
+            body: formData,
+            headers: {
+                'Authorization': AuthService.getBasicAuthHeader()
+            }
         });
         if (!response.ok)
         {
@@ -62,7 +68,8 @@ export default class AlbumService
         const response = await fetch(`${this.baseUrl}/${albumId}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': AuthService.getBasicAuthHeader()
             },
             body: JSON.stringify(albumData)
         });
@@ -75,7 +82,10 @@ export default class AlbumService
     static async deleteAlbum(albumId: string)
     {
         const response = await fetch(`${this.baseUrl}/${albumId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': AuthService.getBasicAuthHeader()
+            }
         });
         if (!response.ok)
         {

@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import CreateMusicDrawer, { CreateMusicDrawerRef } from "./components/create-music-drawer";
-import { useInfiniteQuery, useQueries, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueries } from "@tanstack/react-query";
 import MusicService from "@/services/music-service";
 import { Music } from "@/models/music";
 import { FaPlus, FaHeart } from "react-icons/fa6";
@@ -55,7 +55,7 @@ export default function MusicPage()
 
         observer.observe(loaderRef.current);
         return () => observer.disconnect();
-    }, [musicQuery.hasNextPage, musicQuery.fetchNextPage]);
+    }, [musicQuery]);
 
     const musics: Music[] = musicQuery.data?.pages.flatMap(page => page) || [];
     const albumIds = Array.from(new Set(musics.filter(music => music.hasCoverImage).map(music => music.albumId)));

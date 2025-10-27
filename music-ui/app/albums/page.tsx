@@ -54,7 +54,7 @@ export default function Albums()
 
         observer.observe(loaderRef.current);
         return () => observer.disconnect();
-    }, [albumsQuery.hasNextPage, albumsQuery.fetchNextPage]);
+    }, [albumsQuery]);
 
     const albums: Album[] = albumsQuery.data?.pages.flatMap(page => page) || [];
 
