@@ -1,24 +1,30 @@
 'use client'
 
-import { Album } from "@/models/album";
+import { useErrorMessage } from "@/components/error-message";
+import { Album, UpdateAlbumDto } from "@/models/album";
 import AlbumService from "@/services/album-service";
 import { Drawer, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { useMutation } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle } from "react";
 
-export interface EditAlbumDrawerRef {
+export interface EditAlbumDrawerRef
+{
     opened: boolean;
     openDrawer: (album: Album) => void;
 }
 
-export interface EditAlbumDrawerProps {
+export interface EditAlbumDrawerProps
+{
     onAlbumEdited: () => void;
 }
 
-const EditAlbumDrawer = forwardRef<EditAlbumDrawerRef, EditAlbumDrawerProps>((props, ref) => {
+const EditAlbumDrawer = forwardRef<EditAlbumDrawerRef, EditAlbumDrawerProps>((props, ref) =>
+{
     const [opened, { open, close }] = useDisclosure(false);
+    const { showErrorMessage } = useErrorMessage();
 
     const form = useForm({
         initialValues: {
@@ -35,12 +41,28 @@ const EditAlbumDrawer = forwardRef<EditAlbumDrawerRef, EditAlbumDrawerProps>((pr
         }
     })
 
+    const { mutate: updateAlbum } = useMutation({
+        mutationFn: (albumData: UpdateAlbumDto) =>
+            AlbumService.updateAlbum(form.values.id, albumData),
+        onSuccess: () =>
+        {
+            form.reset();
+            props.onAlbumEdited();
+            close();
+        },
+        onError: (error) =>
+        {
+            showErrorMessage(error.message);
+        }
+    });
+
     useImperativeHandle(ref, () => ({
         opened: opened,
         openDrawer: openDrawer,
     }));
 
-    function openDrawer(album: Album) {
+    function openDrawer(album: Album)
+    {
         form.setValues({
             id: album.id,
             title: album.title,
@@ -50,17 +72,15 @@ const EditAlbumDrawer = forwardRef<EditAlbumDrawerRef, EditAlbumDrawerProps>((pr
         open();
     }
 
-    async function onSave(values: typeof form.values) {
-        const albumData = {
+    async function onSave(values: typeof form.values)
+    {
+        const albumData: UpdateAlbumDto = {
             title: values.title,
             artist: values.artist,
             releaseDate: values.releaseDate ?? '',
         };
 
-        await AlbumService.updateAlbum(values.id, albumData);
-        form.reset();
-        props.onAlbumEdited();
-        close();
+        updateAlbum(albumData);
     }
 
     return (

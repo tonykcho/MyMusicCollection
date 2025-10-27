@@ -1,5 +1,6 @@
 'use client'
 
+import { useErrorMessage } from "@/components/error-message";
 import { Album } from "@/models/album";
 import { CreateMusicDto } from "@/models/music";
 import MusicService from "@/services/music-service";
@@ -7,19 +8,24 @@ import { Drawer, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { useMutation } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle } from "react";
 
-export interface CreateMusicDrawerRef {
+export interface CreateMusicDrawerRef
+{
     opened: boolean;
     openDrawer: (album?: Album | null) => void;
 }
 
-export interface CreateMusicDrawerProps {
+export interface CreateMusicDrawerProps
+{
     onMusicCreated: () => void
 }
 
-const CreateMusicDrawer = forwardRef<CreateMusicDrawerRef, CreateMusicDrawerProps>((props, ref) => {
+const CreateMusicDrawer = forwardRef<CreateMusicDrawerRef, CreateMusicDrawerProps>((props, ref) =>
+{
     const [opened, { open, close }] = useDisclosure(false);
+    const { showErrorMessage } = useErrorMessage();
 
     const form = useForm({
         initialValues: {
@@ -36,15 +42,31 @@ const CreateMusicDrawer = forwardRef<CreateMusicDrawerRef, CreateMusicDrawerProp
         }
     })
 
+    const { mutate: createMusic } = useMutation({
+        mutationFn: (musicData: CreateMusicDto) => MusicService.createMusic(musicData),
+        onSuccess: () =>
+        {
+            form.reset();
+            props.onMusicCreated();
+            close();
+        },
+        onError: (error) =>
+        {
+            showErrorMessage(error.message);
+        }
+    })
+
     useImperativeHandle(ref, () => ({
         opened: opened,
         openDrawer: openDrawer,
     }));
 
-    function openDrawer(album?: Album | null) {
+    function openDrawer(album?: Album | null)
+    {
         form.reset();
 
-        if (album != null) {
+        if (album != null)
+        {
             form.setFieldValue('artist', album.artist);
             form.setFieldValue('releaseDate', album.releaseDate.toISOString());
             form.setFieldValue('albumId', album.id);
@@ -53,7 +75,8 @@ const CreateMusicDrawer = forwardRef<CreateMusicDrawerRef, CreateMusicDrawerProp
         open();
     }
 
-    function submitMusic(values: typeof form.values) {
+    async function submitMusic(values: typeof form.values)
+    {
         const musicData: CreateMusicDto = {
             title: values.title,
             artist: values.artist,
@@ -61,15 +84,7 @@ const CreateMusicDrawer = forwardRef<CreateMusicDrawerRef, CreateMusicDrawerProp
             albumId: values.albumId ?? null,
         };
 
-        MusicService.createMusic(musicData)
-            .then(() => {
-                form.reset();
-                props.onMusicCreated();
-                close();
-            })
-            .catch((error) => {
-                console.error('Error creating music:', error);
-            });
+        createMusic(musicData);
     }
 
     return (

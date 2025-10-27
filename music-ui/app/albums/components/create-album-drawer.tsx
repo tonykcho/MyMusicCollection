@@ -1,22 +1,28 @@
 'use client'
 
+import { useErrorMessage } from "@/components/error-message";
 import AlbumService from "@/services/album-service";
 import { Drawer, FileInput, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { useMutation } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle } from "react";
 
-export interface CreateAlbumDrawerRef {
+export interface CreateAlbumDrawerRef
+{
     openDrawer: () => void;
 }
 
-export interface CreateAlbumDrawerProps {
+export interface CreateAlbumDrawerProps
+{
     onAlbumCreated: () => void
 }
 
-const CreateAlbumDrawer = forwardRef<CreateAlbumDrawerRef, CreateAlbumDrawerProps>((props, ref) => {
+const CreateAlbumDrawer = forwardRef<CreateAlbumDrawerRef, CreateAlbumDrawerProps>((props, ref) =>
+{
     const [opened, { open, close }] = useDisclosure(false);
+    const { showErrorMessage } = useErrorMessage();
 
     const form = useForm({
         initialValues: {
@@ -33,16 +39,33 @@ const CreateAlbumDrawer = forwardRef<CreateAlbumDrawerRef, CreateAlbumDrawerProp
         }
     })
 
+    const { mutate: createAlbum } = useMutation({
+        mutationFn: (albumData: { title: string; artist: string; releaseDate: string; coverImage?: File }) =>
+            AlbumService.createAlbum(albumData),
+        onSuccess: () =>
+        {
+            form.reset();
+            props.onAlbumCreated();
+            close();
+        },
+        onError: (error) =>
+        {
+            showErrorMessage(error.message);
+        }
+    });
+
     useImperativeHandle(ref, () => ({
         openDrawer: openDrawer,
     }));
 
-    function openDrawer() {
+    function openDrawer()
+    {
         form.reset();
         open();
     }
 
-    function submitAlbum(values: typeof form.values) {
+    async function submitAlbum(values: typeof form.values)
+    {
         const albumData = {
             title: values.title,
             artist: values.artist,
@@ -50,15 +73,7 @@ const CreateAlbumDrawer = forwardRef<CreateAlbumDrawerRef, CreateAlbumDrawerProp
             coverImage: values.coverImage ?? undefined,
         };
 
-        AlbumService.createAlbum(albumData)
-            .then(() => {
-                form.reset();
-                props.onAlbumCreated();
-                close();
-            })
-            .catch((error) => {
-                console.error('Error creating album:', error);
-            });
+        createAlbum(albumData);
     }
 
     return (

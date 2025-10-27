@@ -2,9 +2,9 @@
 
 import { Album } from "@/models/album";
 import AlbumService from "@/services/album-service";
-import { Drawer, DrawerHeader, Image, Switch } from "@mantine/core";
+import { Drawer, Image, Switch } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import React from "react";
 import CreateMusicDrawer, { CreateMusicDrawerRef } from "@/app/music/components/create-music-drawer";
@@ -14,77 +14,115 @@ import MusicService from "@/services/music-service";
 import { Music } from "@/models/music";
 import EditAlbumDrawer, { EditAlbumDrawerRef } from "./edit-album-drawer";
 import MusicDetailDrawer, { MusicDetailDrawerRef } from "@/app/music/components/music-detail-drawer";
+import { useErrorMessage } from "@/components/error-message";
 
-export interface AlbumDetailDrawerRef {
+export interface AlbumDetailDrawerRef
+{
     openDrawer: (id: string, coverUrl?: string | null) => void;
 }
 
-export interface AlbumDetailDrawerProps {
+export interface AlbumDetailDrawerProps
+{
     onAlbumEdited: () => void;
     onAlbumDeleted: () => void;
 }
 
-const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProps>((props, ref) => {
+const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProps>((props, ref) =>
+{
     const [opened, { open, close }] = useDisclosure(false);
     const [albumId, setAlbumId] = useState<string | null>(null);
     const [coverUrl, setCoverUrl] = useState<string | null>(null);
     const [album, setAlbum] = useState<Album | null>(null);
     const { confirm, messageBoxOpened } = useMessage();
+    const { showErrorMessage } = useErrorMessage();
 
     const createMusicDrawerRef = React.useRef<CreateMusicDrawerRef>(null);
     const editAlbumDrawerRef = React.useRef<EditAlbumDrawerRef>(null);
     const musicDetailDrawerRef = React.useRef<MusicDetailDrawerRef>(null);
 
+    const { mutate: deleteAlbum } = useMutation({
+        mutationFn: (id: string) => AlbumService.deleteAlbum(id),
+        onSuccess: () =>
+        {
+            props.onAlbumDeleted();
+            close();
+        },
+        onError: (error) =>
+        {
+            showErrorMessage(error.message);
+        }
+    });
+
+    const { mutate: deleteMusic } = useMutation({
+        mutationFn: (id: string) => MusicService.deleteMusic(id),
+        onSuccess: () =>
+        {
+            query.refetch();
+        },
+        onError: (error) =>
+        {
+            showErrorMessage(error.message);
+        }
+    });
+
     useImperativeHandle(ref, () => ({
         openDrawer: openDrawer,
     }));
 
-    function openDrawer(id: string, coverUrl?: string | null) {
+    function openDrawer(id: string, coverUrl?: string | null)
+    {
         setAlbumId(id);
         setCoverUrl(coverUrl || null);
         open();
     }
 
-    function closeDrawer() {
-        if (createMusicDrawerRef.current?.opened) {
+    function closeDrawer()
+    {
+        if (createMusicDrawerRef.current?.opened)
+        {
             return;
         }
 
-        if (musicDetailDrawerRef.current?.opened) {
+        if (musicDetailDrawerRef.current?.opened)
+        {
             return;
         }
 
-        if (editAlbumDrawerRef.current?.opened) {
+        if (editAlbumDrawerRef.current?.opened)
+        {
             return;
         }
 
-        if (messageBoxOpened) {
+        if (messageBoxOpened)
+        {
             return;
         }
 
         close();
     }
 
-    async function onAlbumDeleted(album: Album) {
+    async function onAlbumDeleted(album: Album)
+    {
         const confirmed = await confirm(`Are you sure you want to delete ${album.title}?`);
-        if (confirmed) {
-            await AlbumService.deleteAlbum(album.id);
-            props.onAlbumDeleted();
-            closeDrawer();
+        if (confirmed)
+        {
+            deleteAlbum(album.id);
         }
     }
 
-    async function onMusicDeleted(music: Music) {
+    async function onMusicDeleted(music: Music)
+    {
         const confirmed = await confirm(`Are you sure you want to delete ${music.title}?`);
-        if (confirmed) {
-            await MusicService.deleteMusic(music.id);
-            query.refetch();
+        if (confirmed)
+        {
+            deleteMusic(music.id);
         }
     }
 
     const query = useQuery({
         queryKey: ['album-detail', albumId],
-        queryFn: async () => {
+        queryFn: async () =>
+        {
             if (!albumId) return null;
             const fetchedAlbum = await AlbumService.getAlbumById(albumId);
             fetchedAlbum.coverUrl = coverUrl;
@@ -94,7 +132,8 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
         enabled: !!albumId
     });
 
-    function renderAlbumDetail() {
+    function renderAlbumDetail()
+    {
         return (
             <>
                 <div className="flex-2 flex flex-col h-full p-2">
@@ -128,7 +167,8 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
         )
     }
 
-    function renderMusicList() {
+    function renderMusicList()
+    {
         return (
             <>
                 <div className="flex-3 flex flex-col p-2">
@@ -183,7 +223,7 @@ const AlbumDetailDrawer = forwardRef<AlbumDetailDrawerRef, AlbumDetailDrawerProp
                 onAlbumEdited={() => { query.refetch(); props.onAlbumEdited(); }} />
             <MusicDetailDrawer
                 ref={musicDetailDrawerRef}
-                onMusicDeleted={() => { onMusicDeleted; query.refetch(); }}
+                onMusicDeleted={() => { query.refetch(); }}
                 onMusicEdited={() => { query.refetch(); }} />
         </>
     )
