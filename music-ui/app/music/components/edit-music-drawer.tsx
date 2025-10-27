@@ -1,24 +1,30 @@
 'use client'
 
+import { useErrorMessage } from "@/components/error-message";
 import { Music } from "@/models/music";
 import MusicService from "@/services/music-service";
 import { Drawer, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { useMutation } from "@tanstack/react-query";
 import { forwardRef, useImperativeHandle } from "react";
 
-export interface EditMusicDrawerRef {
+export interface EditMusicDrawerRef
+{
     opened: boolean;
     openDrawer: (music: Music) => void;
 }
 
-export interface EditMusicDrawerProps {
+export interface EditMusicDrawerProps
+{
     onMusicEdited: () => void;
 }
 
-const EditMusicDrawer = forwardRef<EditMusicDrawerRef, EditMusicDrawerProps>((props, ref) => {
+const EditMusicDrawer = forwardRef<EditMusicDrawerRef, EditMusicDrawerProps>((props, ref) =>
+{
     const [opened, { open, close }] = useDisclosure(false);
+    const { showErrorMessage } = useErrorMessage();
 
     const form = useForm({
         initialValues: {
@@ -34,12 +40,28 @@ const EditMusicDrawer = forwardRef<EditMusicDrawerRef, EditMusicDrawerProps>((pr
         }
     });
 
+    const { mutate: updateMusic } = useMutation({
+        mutationFn: (musicData: { title: string; artist: string; releaseDate: string }) =>
+            MusicService.updateMusic(form.values.id, musicData),
+        onSuccess: () =>
+        {
+            form.reset();
+            props.onMusicEdited();
+            close();
+        },
+        onError: (error) =>
+        {
+            showErrorMessage(error.message);
+        }
+    });
+
     useImperativeHandle(ref, () => ({
         opened: opened,
         openDrawer: openDrawer,
     }));
 
-    function openDrawer(music: Music) {
+    function openDrawer(music: Music)
+    {
         form.setValues({
             id: music.id,
             title: music.title,
@@ -49,17 +71,15 @@ const EditMusicDrawer = forwardRef<EditMusicDrawerRef, EditMusicDrawerProps>((pr
         open();
     }
 
-    async function onSave(values: typeof form.values) {
+    async function onSave(values: typeof form.values)
+    {
         const musicData = {
             title: values.title,
             artist: values.artist,
             releaseDate: values.releaseDate ?? '',
         };
 
-        await MusicService.updateMusic(values.id, musicData);
-        form.reset();
-        props.onMusicEdited();
-        close();
+        updateMusic(musicData);
     }
 
     return (

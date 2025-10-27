@@ -5,48 +5,93 @@ import { Music } from "@/models/music";
 import MusicService from "@/services/music-service";
 import { Drawer, Image, Switch } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import React from "react";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { FaHeart, FaPen, FaTrashCan } from "react-icons/fa6";
 import EditMusicDrawer, { EditMusicDrawerRef } from "./edit-music-drawer";
+import { useErrorMessage } from "@/components/error-message";
 
-export interface MusicDetailDrawerRef {
+export interface MusicDetailDrawerRef
+{
     opened: boolean;
     openDrawer: (id: string, coverUrl?: string | null) => void;
 }
 
-export interface MusicDetailDrawerProps {
+export interface MusicDetailDrawerProps
+{
     onMusicEdited: () => void;
     onMusicDeleted: () => void;
 }
 
-const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProps>((props, ref) => {
+const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProps>((props, ref) =>
+{
     const [opened, { open, close }] = useDisclosure(false);
     const [musicId, setMusicId] = useState<string | null>(null);
     const [coverUrl, setCoverUrl] = useState<string | null>(null);
     const [music, setMusic] = useState<Music | null>(null);
     const { messageBoxOpened, confirm } = useMessage();
+    const { showErrorMessage } = useErrorMessage();
 
     const editMusicDrawerRef = React.useRef<EditMusicDrawerRef>(null);
+
+    const { mutate: deleteMusic } = useMutation({
+        mutationFn: (id: string) => MusicService.deleteMusic(id),
+        onSuccess: () =>
+        {
+            props.onMusicDeleted();
+            close();
+        },
+        onError: (error) =>
+        {
+            showErrorMessage(error.message);
+        }
+    });
+
+    const { mutate: toggleFavorite } = useMutation({
+        mutationFn: async (music: Music) =>
+        {
+            if (music.isFavorite == false)
+            {
+                await MusicService.setFavorite(music.id);
+            }
+            else
+            {
+                await MusicService.unsetFavorite(music.id);
+            }
+        },
+        onSuccess: () =>
+        {
+            props.onMusicEdited();
+            query.refetch();
+        },
+        onError: (error) =>
+        {
+            showErrorMessage(error.message);
+        }
+    });
 
     useImperativeHandle(ref, () => ({
         opened: opened,
         openDrawer: openDrawer,
     }));
 
-    function openDrawer(id: string, coverUrl?: string | null) {
+    function openDrawer(id: string, coverUrl?: string | null)
+    {
         setMusicId(id);
         setCoverUrl(coverUrl || null);
         open();
     }
 
-    function closeDrawer() {
-        if (editMusicDrawerRef.current?.opened) {
+    function closeDrawer()
+    {
+        if (editMusicDrawerRef.current?.opened)
+        {
             return;
         }
 
-        if (messageBoxOpened) {
+        if (messageBoxOpened)
+        {
             return;
         }
 
@@ -55,7 +100,8 @@ const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProp
 
     const query = useQuery({
         queryKey: ['album-detail', musicId],
-        queryFn: async () => {
+        queryFn: async () =>
+        {
             if (!musicId) return null;
             const fetchedMusic = await MusicService.getMusicById(musicId);
             fetchedMusic.coverUrl = coverUrl;
@@ -65,24 +111,19 @@ const MusicDetailDrawer = forwardRef<MusicDetailDrawerRef, MusicDetailDrawerProp
         enabled: !!musicId
     });
 
-    async function onMusicDeleted(music: Music) {
+    async function onMusicDeleted(music: Music)
+    {
         const confirmed = await confirm(`Are you sure you want to delete ${music.title}?`);
-        if (confirmed) {
-            await MusicService.deleteMusic(music.id);
-            props.onMusicDeleted();
-            close();
+        if (confirmed)
+        {
+            deleteMusic(music.id);
         }
     }
 
-    async function toggleMusicAsFavorite(music: Music) {
-        if (music.isFavorite == false) {
-            await MusicService.setFavorite(music.id);
-        }
-        else {
-            await MusicService.unsetFavorite(music.id);
-        }
-        props.onMusicEdited();
-        query.refetch();
+
+    async function toggleMusicAsFavorite(music: Music)
+    {
+        toggleFavorite(music);
     }
 
     return (

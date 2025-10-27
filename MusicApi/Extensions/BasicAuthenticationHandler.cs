@@ -42,12 +42,12 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         }
 
         var buffer = new Span<byte>(new byte[authHeader.Parameter?.Length ?? 0]);
-        if (Convert.TryFromBase64String(authHeader.Parameter ?? string.Empty, buffer, out _) == false)
+        if (Convert.TryFromBase64String(authHeader.Parameter ?? string.Empty, buffer, out int bytesRead) == false)
         {
             return AuthenticateResult.Fail("Invalid Base64 Encoding");
         }
 
-        var credentialBytes = buffer.ToArray();
+        var credentialBytes = buffer.Slice(0, bytesRead);
         var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':', 2);
 
         if (credentials.Length != 2)

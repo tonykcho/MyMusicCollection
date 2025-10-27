@@ -11,20 +11,24 @@ import { Badge } from "@mantine/core";
 
 const PAGE_SIZE = 20;
 
-export default function Albums() {
+export default function Albums()
+{
     const [coverUrls, setCoverUrls] = React.useState<{ [key: string]: string }>({});
     const createAlbumDrawerRef = React.useRef<CreateAlbumDrawerRef>(null);
     const albumDetailDrawerRef = React.useRef<AlbumDetailDrawerRef>(null);
 
     const albumsQuery = useInfiniteQuery({
         queryKey: ['albums'],
-        queryFn: async ({ pageParam = 0 }) => {
+        queryFn: async ({ pageParam = 0 }) =>
+        {
             const albums = await AlbumService.getAlbums(pageParam * PAGE_SIZE, PAGE_SIZE);
             return albums;
         },
         initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.length === 0) {
+        getNextPageParam: (lastPage, allPages) =>
+        {
+            if (lastPage.length === 0)
+            {
                 return undefined; // No more pages
             }
             return allPages.length; // Next page index
@@ -32,11 +36,14 @@ export default function Albums() {
     })
 
     const loaderRef = React.useRef<HTMLDivElement>(null);
-    useEffect(() => {
+    useEffect(() =>
+    {
         if (!loaderRef.current) return;
 
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
+        const observer = new IntersectionObserver((entries) =>
+        {
+            if (entries[0].isIntersecting)
+            {
                 albumsQuery.fetchNextPage();
             }
         }, {
@@ -47,17 +54,19 @@ export default function Albums() {
 
         observer.observe(loaderRef.current);
         return () => observer.disconnect();
-    }, [albumsQuery.hasNextPage, albumsQuery.fetchNextPage]);
+    }, [albumsQuery]);
 
     const albums: Album[] = albumsQuery.data?.pages.flatMap(page => page) || [];
 
     useQueries({
         queries: albums.filter(album => album.hasCoverImage).map((album) => ({
             queryKey: ['albumCover', album.id],
-            queryFn: async () => {
+            queryFn: async () =>
+            {
                 const cover = await AlbumService.getAlbumCover(album.id);
                 // make a url for the blob
-                if (cover) {
+                if (cover)
+                {
                     setCoverUrls(prev => ({ ...prev, [album.id]: URL.createObjectURL(cover) }));
                 }
 
@@ -67,7 +76,8 @@ export default function Albums() {
         }))
     })
 
-    function RenderAlbum(album: Album) {
+    function RenderAlbum(album: Album)
+    {
         const coverUrl = coverUrls[album.id];
         album.coverUrl = coverUrl;
         return (
@@ -86,7 +96,8 @@ export default function Albums() {
         );
     }
 
-    if (albumsQuery.isLoading) {
+    if (albumsQuery.isLoading)
+    {
         return (
             <div className='flex flex-col items-center justify-center flex-1'>
                 <p className='text-xl'>Loading...</p>
@@ -94,7 +105,8 @@ export default function Albums() {
         );
     }
 
-    if (albumsQuery.isError) {
+    if (albumsQuery.isError)
+    {
         return (
             <div className='flex flex-col items-center justify-center flex-1'>
                 <p className='text-xl'>Error loading albums</p>

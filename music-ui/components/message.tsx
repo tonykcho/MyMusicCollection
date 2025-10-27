@@ -3,7 +3,8 @@
 import React from "react";
 import { FaN, FaY } from "react-icons/fa6";
 
-interface MessageContextProps {
+interface MessageContextProps
+{
     messageBoxOpened: boolean;
     confirm: (message: string) => Promise<boolean>;
     showMessage: (message: string) => void;
@@ -12,64 +13,79 @@ interface MessageContextProps {
 
 const MessageContext = React.createContext<MessageContextProps | undefined>(undefined);
 
-export function useMessage() {
+export function useMessage()
+{
     const context = React.useContext(MessageContext);
-    if (!context) {
+    if (!context)
+    {
         throw new Error("useMessage must be used within a MessageProvider");
     }
     return context;
 }
 
 
-export function MessageProvider({ children }: { children: React.ReactNode }) {
+export function MessageProvider({ children }: { children: React.ReactNode })
+{
     const [message, setMessage] = React.useState<string | null>(null);
     const resolveRef = React.useRef<(value: boolean) => void | null>(null);
 
     const messageBoxOpened = !!message;
 
-    const confirm = (msg: string) => {
+    const confirm = (msg: string) =>
+    {
         setMessage(msg);
-        return new Promise<boolean>((resolve) => {
+        return new Promise<boolean>((resolve) =>
+        {
             resolveRef.current = resolve;
         });
     }
 
-    const handleYes = () => {
-        if (resolveRef.current) {
+    const handleYes = () =>
+    {
+        if (resolveRef.current)
+        {
             resolveRef.current(true);
             resolveRef.current = null;
         }
         hideMessage();
     }
 
-    const handleNo = () => {
-        if (resolveRef.current) {
+    const handleNo = () =>
+    {
+        if (resolveRef.current)
+        {
             resolveRef.current(false);
             resolveRef.current = null;
         }
         hideMessage();
     }
 
-    const showMessage = (msg: string) => {
+    const showMessage = (msg: string) =>
+    {
         setMessage(msg);
     };
 
-    const hideMessage = () => {
+    const hideMessage = () =>
+    {
         setMessage(null);
     };
 
     // Listen to Escape key to close the message
-    React.useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape' && message) {
+    React.useEffect(() =>
+    {
+        const handleKeyDown = (e: KeyboardEvent) =>
+        {
+            if (e.key === 'Escape' && message)
+            {
                 handleNo();
             }
         };
         window.addEventListener('keydown', handleKeyDown);
-        return () => {
+        return () =>
+        {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [message]);
+    });
 
     return (
         <MessageContext.Provider value={{ messageBoxOpened, confirm, showMessage, hideMessage }}>

@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import CreateMusicDrawer, { CreateMusicDrawerRef } from "./components/create-music-drawer";
-import { useInfiniteQuery, useQueries, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueries } from "@tanstack/react-query";
 import MusicService from "@/services/music-service";
 import { Music } from "@/models/music";
 import { FaPlus, FaHeart } from "react-icons/fa6";
@@ -12,20 +12,24 @@ import { Badge } from "@mantine/core";
 
 const PAGE_SIZE = 20;
 
-export default function MusicPage() {
+export default function MusicPage()
+{
     const [coverUrls, setCoverUrls] = React.useState<{ [key: string]: string }>({});
     const createMusicDrawerRef = React.useRef<CreateMusicDrawerRef>(null);
     const musicDetailDrawerRef = React.useRef<MusicDetailDrawerRef>(null);
 
     const musicQuery = useInfiniteQuery({
         queryKey: ['musics'],
-        queryFn: async ({ pageParam = 0 }) => {
+        queryFn: async ({ pageParam = 0 }) =>
+        {
             const musics = await MusicService.getMusics(pageParam * PAGE_SIZE, PAGE_SIZE);
             return musics;
         },
         initialPageParam: 0,
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.length === 0) {
+        getNextPageParam: (lastPage, allPages) =>
+        {
+            if (lastPage.length === 0)
+            {
                 return undefined; // No more pages
             }
             return allPages.length; // Next page index
@@ -33,11 +37,14 @@ export default function MusicPage() {
     })
 
     const loaderRef = React.useRef<HTMLDivElement>(null);
-    useEffect(() => {
+    useEffect(() =>
+    {
         if (!loaderRef.current) return;
 
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
+        const observer = new IntersectionObserver((entries) =>
+        {
+            if (entries[0].isIntersecting)
+            {
                 musicQuery.fetchNextPage();
             }
         }, {
@@ -48,7 +55,7 @@ export default function MusicPage() {
 
         observer.observe(loaderRef.current);
         return () => observer.disconnect();
-    }, [musicQuery.hasNextPage, musicQuery.fetchNextPage]);
+    }, [musicQuery]);
 
     const musics: Music[] = musicQuery.data?.pages.flatMap(page => page) || [];
     const albumIds = Array.from(new Set(musics.filter(music => music.hasCoverImage).map(music => music.albumId)));
@@ -56,10 +63,12 @@ export default function MusicPage() {
     useQueries({
         queries: albumIds.map(albumId => ({
             queryKey: ['musicCover', albumId],
-            queryFn: async () => {
+            queryFn: async () =>
+            {
                 const cover = await AlbumService.getAlbumCover(albumId);
                 // make a url for the blob
-                if (cover) {
+                if (cover)
+                {
                     setCoverUrls(prev => ({ ...prev, [albumId]: URL.createObjectURL(cover) }));
                 }
 
@@ -70,7 +79,8 @@ export default function MusicPage() {
     })
 
 
-    function RenderMusic(music: Music) {
+    function RenderMusic(music: Music)
+    {
         const coverUrl = coverUrls[music.albumId];
         music.coverUrl = coverUrl;
         return (
@@ -91,7 +101,8 @@ export default function MusicPage() {
         );
     }
 
-    if (musicQuery.isLoading) {
+    if (musicQuery.isLoading)
+    {
         return (
             <div className='flex flex-col items-center justify-center flex-1'>
                 <p className='text-xl'>Loading...</p>
@@ -99,7 +110,8 @@ export default function MusicPage() {
         );
     }
 
-    if (musicQuery.isError) {
+    if (musicQuery.isError)
+    {
         return (
             <div className='flex flex-col items-center justify-center flex-1'>
                 <p className='text-xl'>Error loading music.</p>
