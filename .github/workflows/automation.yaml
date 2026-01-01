@@ -25,7 +25,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: "9.0.x"
+          dotnet-version: "9.0.308"
       - name: Install dependencies
         run: dotnet restore MusicApi/MusicApi.csproj
       - name: Build
