@@ -25,7 +25,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: "9.0.308"
+          dotnet-version: "9.0.x"
       - name: Install dependencies
         run: dotnet restore MusicApi/MusicApi.csproj
       - name: Build
@@ -33,7 +33,7 @@ jobs:
       - name: Run EF Core Migrations
         run: |
           cd MusicApi
-          dotnet tool install --global dotnet-ef
+          dotnet tool install --global dotnet-ef --version '9.0.0-*'
           export PATH="$PATH:/home/runner/.dotnet/tools"
           dotnet ef database update --project MusicApi.csproj --context AppDbContext --connection "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=pwd"
       # - name: Test
