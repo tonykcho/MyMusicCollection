@@ -1,4 +1,5 @@
 using FluentValidation;
+using MusicApi.Diagnostics;
 
 namespace MusicApi.Abstracts;
 
@@ -33,8 +34,20 @@ public class ApiRequestPipeline(IServiceProvider serviceProvider)
 
         var handler = serviceProvider.GetRequiredService<IApiRequestHandler<TRequest>>();
 
-        var result = await handler.HandleAsync(request, cancellationToken);
+        using var activity = MusicApiInstrumentation.ActivitySource.StartActivity(handler.GetType().Name);
+        activity?.SetTag("request.type", typeof(TRequest).Name);
 
-        return result;
+        try
+        {
+            var result = await handler.HandleAsync(request, cancellationToken);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+
+            throw;
+        }
     }
 }

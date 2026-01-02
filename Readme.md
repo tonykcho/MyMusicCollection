@@ -7,7 +7,8 @@ Use vscode debug, it will set up services with compose.dev.yaml
 Use compose.yaml to create all services.
 
 ```
-docker compose --env-file .env -f compose.yaml up -d
+docker compose --env-file .env -f compose.test.otel.yaml up -d
+docker compose --env-file .env -f compose.test.yaml up -d
 ```
 
 # Run prod with image
@@ -15,5 +16,6 @@ docker compose --env-file .env -f compose.yaml up -d
 Use compose.prod.yaml to create all servicse
 
 ```
+docker compose --env-file .env -f compose.prod.otel.yaml up -d
 docker compose --env-file .env -f compose.prod.yaml up -d
 ```

@@ -9,6 +9,7 @@ builder
     .AddLogging()
     .AddAuthentication()
     .AddServices()
+    .AddOpentelemetry()
     .AddRequestHandlers()
     .AddValidators()
     .AddRateLimiter()
@@ -29,6 +30,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseAntiforgery();
+app.MapPrometheusScrapingEndpoint().AllowAnonymous();
 
 app.MapApiEndpoints();
 

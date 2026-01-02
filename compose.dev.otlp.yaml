@@ -1,0 +1,37 @@
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.development.yaml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/var/lib/prometheus
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      - 4317:4317 # expose jaeger on port 4317 for local access for development
+      - 4318:4318 # expose jaeger on port 4318 for local access for development
+      - 16686:16686 # expose jaeger on port 16686 for local access for development
+    volumes:
+      - jaeger-data:/var/lib/jaeger
+  loki:
+    image: grafana/loki
+    ports:
+      - 3100:3100
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki-data:/loki
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+volumes:
+  grafana-data:
+  prometheus-data:
+  loki-data:
+  jaeger-data:

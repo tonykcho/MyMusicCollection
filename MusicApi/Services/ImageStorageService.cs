@@ -1,3 +1,5 @@
+using MusicApi.Diagnostics;
+
 namespace MusicApi.Services;
 
 public class ImageStorageService
@@ -17,6 +19,8 @@ public class ImageStorageService
 
     public async Task<string> SaveImageAsync(IFormFile file, CancellationToken cancellationToken)
     {
+        using var activity = MusicApiInstrumentation.ActivitySource.StartActivity("ImageStorageService:SaveImageAsync");
+
         var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
 
         if (!Directory.Exists(uploadsFolder))

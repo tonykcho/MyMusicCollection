@@ -4,6 +4,7 @@
         {
             "label": "Build",
             "dependsOn": [
+                "Compose Otlp Up",
                 "Compose Up",
                 "Run Migrations",
                 "Build Solution"
@@ -17,6 +18,19 @@
                 "compose",
                 "-f",
                 "${workspaceFolder}/compose.dev.yaml",
+                "up",
+                "-d",
+                "--no-recreate"
+            ],
+        },
+        {
+            "label": "Compose Otlp Up",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "compose",
+                "-f",
+                "${workspaceFolder}/compose.dev.otlp.yaml",
                 "up",
                 "-d",
                 "--no-recreate"

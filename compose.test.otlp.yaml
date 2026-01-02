@@ -1,0 +1,63 @@
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/var/lib/prometheus
+    networks:
+      - otlp-network
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      - 4317
+      - 4318
+      - 16686
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jaeger.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.jaeger.entrypoints=jaeger"
+      - "traefik.http.services.jaeger.loadbalancer.server.port=16686"
+      - "traefik.docker.network=otlp-network"
+    volumes:
+      - jaeger-data:/var/lib/jaeger
+    networks:
+      - otlp-network
+  loki:
+    image: grafana/loki
+    ports:
+      - 3100
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki-data:/loki
+    networks:
+      - otlp-network
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.grafana.entrypoints=grafana"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.docker.network=otlp-network"
+    networks:
+      - otlp-network
+volumes:
+  grafana-data:
+  loki-data:
+  jaeger-data:
+  prometheus-data:
+
+
+networks:
+  otlp-network:
+    name: otlp-network
+    driver: bridge

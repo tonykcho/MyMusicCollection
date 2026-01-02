@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres
+    image: postgres:latest
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -9,6 +9,5 @@ services:
       - "5432:5432"
     volumes:
       - music_postgres_data:/var/lib/postgresql
-
 volumes:
   music_postgres_data:
