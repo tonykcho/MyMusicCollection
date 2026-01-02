@@ -7,7 +7,13 @@ using Microsoft.AspNetCore.RateLimiting;
 using MusicApi.Abstracts;
 using MusicApi.DbContexts;
 using MusicApi.Services;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
 using Serilog;
+using MusicApi.Diagnostics;
+using OpenTelemetry.Logs;
+using Serilog.Sinks.Grafana.Loki;
 
 namespace MusicApi.Extensions;
 
@@ -17,6 +23,12 @@ public static class WebApplicationBuilderExtension
     {
         LoggerConfiguration configuration = new LoggerConfiguration();
 
+        var labels = new List<LokiLabel>
+        {
+            new LokiLabel { Key = "app", Value = builder.Environment.ApplicationName },
+            new LokiLabel { Key = "env", Value = builder.Environment.EnvironmentName }
+        };
+
         configuration
             .MinimumLevel.Information()
             .WriteTo.Console();
@@ -25,6 +37,9 @@ public static class WebApplicationBuilderExtension
             .WriteTo.Logger(c => c
                 .Filter.ByIncludingOnly(e => e.Level == Serilog.Events.LogEventLevel.Error || e.Level == Serilog.Events.LogEventLevel.Fatal)
                 .WriteTo.File("logs/error-.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7));
+
+        configuration
+            .WriteTo.GrafanaLoki(builder.Configuration["OTLP:Loki"]!, labels);
 
         Log.Logger = configuration.CreateLogger();
 
@@ -105,6 +120,49 @@ public static class WebApplicationBuilderExtension
 
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
         });
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddOpentelemetry(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddOpenTelemetry()
+            .ConfigureResource(resource =>
+            {
+                resource.AddService(builder.Environment.ApplicationName);
+            })
+            .WithMetrics(options =>
+            {
+                options
+                    .AddProcessInstrumentation()
+                    .AddRuntimeInstrumentation()
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddSqlClientInstrumentation()
+                    .AddMeter("MusicApi.Metrics")
+                    .AddMeter("Microsoft.AspNetCore.Hosting")
+                    .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
+                    .AddPrometheusExporter();
+            })
+            .WithTracing(tracerProviderBuilder =>
+            {
+                tracerProviderBuilder
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(builder.Environment.ApplicationName))
+                    .AddSource(MusicApiInstrumentation.ActivitySourceName)
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddEntityFrameworkCoreInstrumentation()
+                    .AddSqlClientInstrumentation()
+                    .AddOtlpExporter(option =>
+                    {
+                        var endpoint = builder.Configuration["OTLP:Jaeger"];
+                        if (string.IsNullOrEmpty(endpoint))
+                        {
+                            throw new InvalidOperationException("OTLP:Jaeger configuration is missing or empty.");
+                        }
+                        option.Endpoint = new Uri(endpoint);
+                    });
+            });
 
         return builder;
     }
