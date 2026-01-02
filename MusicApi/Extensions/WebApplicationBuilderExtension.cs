@@ -39,7 +39,7 @@ public static class WebApplicationBuilderExtension
                 .WriteTo.File("logs/error-.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7));
 
         configuration
-            .WriteTo.GrafanaLoki(builder.Configuration["OTLP:Loki"]!, labels);
+            .WriteTo.GrafanaLoki(builder.Configuration["Otlp:Loki"]!, labels);
 
         Log.Logger = configuration.CreateLogger();
 
@@ -155,7 +155,7 @@ public static class WebApplicationBuilderExtension
                     .AddSqlClientInstrumentation()
                     .AddOtlpExporter(option =>
                     {
-                        var endpoint = builder.Configuration["OTLP:Jaeger"];
+                        var endpoint = builder.Configuration["Otlp:Jaeger"];
                         if (string.IsNullOrEmpty(endpoint))
                         {
                             throw new InvalidOperationException("OTLP:Jaeger configuration is missing or empty.");
