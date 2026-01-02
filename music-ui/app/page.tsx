@@ -1,10 +1,11 @@
 'use client';
 
-export default function Home() {
+export default function Home()
+{
 
   return (
     <div className='flex flex-row items-center justify-center flex-1'>
-      <p className='text-xl'>Welcome to Music Collection (Testing Watch Tower)</p>
+      <p className='text-xl'>Welcome to Music Collection (Testing Watch Tower v1.1)</p>
     </div>
   );
 }

@@ -10,7 +10,7 @@ services:
     volumes:
       - music_postgres_data:/var/lib/postgresql
     networks:
-      - traefik-net
+      - music-network
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}" ]
       interval: 10s
@@ -33,9 +33,11 @@ services:
       - "traefik.http.routers.music-api.rule=PathPrefix(`/`)"
       - "traefik.http.routers.music-api.entrypoints=music-api"
       - "traefik.http.services.music-api.loadbalancer.server.port=5550"
+      - "traefik.docker.network=music-network"
       - "com.centurylinklabs.watchtower.enable=true"
     networks:
-      - traefik-net
+      - music-network
+      - otlp-network
     volumes:
       - music_api_images:/app/uploads
     restart: unless-stopped
@@ -48,7 +50,7 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Server=${POSTGRES_HOST:-postgres};Database=MyMusicCollection;User Id=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres};
     networks:
-      - traefik-net
+      - music-network
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
@@ -68,10 +70,10 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
     networks:
-      - traefik-net
+      - music-network
 
   traefik:
-    image: traefik
+    image: traefik:v3.6.4
     command:
       - "--api.insecure=true"
       - "--api.dashboard=true"
@@ -79,27 +81,33 @@ services:
       - "--log.level=DEBUG"
       - "--entrypoints.music-api.address=:5550"
       - "--entrypoints.music-ui.address=:5501"
+      - "--entrypoints.grafana.address=:3000"
+      - "--entrypoints.jaeger.address=:16686"
       - "--accesslog=true"
       - "--accesslog.filepath=/var/log/access.log"
     ports:
       - "8080:8080" # Dashboard
       - "5501:5501" # Music UI
       - "5550:5550" # Music API
+      - "3000:3000" # Grafana
+      - "16686:16686" # Jaeger
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - "./traefik-logs:/var/log" # Mount a directory for log files
     restart: unless-stopped
     networks:
-      - traefik-net
+      - music-network
 
   watchtower:
     image: containrrr/watchtower
+    environment:
+      - DOCKER_API_VERSION=1.44
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --cleanup --interval 300
     restart: unless-stopped
     networks:
-      - traefik-net
+      - music-network
 
 volumes:
   music_postgres_data:
@@ -107,5 +115,8 @@ volumes:
 
 
 networks:
-  traefik-net:
+  music-network:
+    name: music-network
     driver: bridge
+  otlp-network:
+    external: true
