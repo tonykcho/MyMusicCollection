@@ -32,8 +32,8 @@ services:
         condition: service_completed_successfully
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.music-api.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.music-api.entrypoints=music-api"
+      - "traefik.http.routers.music-api.rule=PathPrefix(`/api`)"
+      - "traefik.http.routers.music-api.entrypoints=web"
       - "traefik.http.services.music-api.loadbalancer.server.port=5550"
       - "traefik.docker.network=music-network"
       - "com.centurylinklabs.watchtower.enable=true"
@@ -56,6 +56,7 @@ services:
     networks:
       - music-network
     labels:
+      - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=true"
 
   music-ui:
@@ -73,7 +74,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.music-ui.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.music-ui.entrypoints=music-ui"
+      - "traefik.http.routers.music-ui.entrypoints=web"
       - "traefik.http.services.music-ui.loadbalancer.server.port=5501"
       - "traefik.docker.network=music-network"
     restart: unless-stopped
@@ -89,16 +90,18 @@ services:
       - "--api.dashboard=true"
       - "--providers.docker"
       - "--log.level=DEBUG"
-      - "--entrypoints.music-api.address=:5550"
-      - "--entrypoints.music-ui.address=:5501"
+      - "--entrypoints.web.address=:80"
+      #- "--entrypoints.music-api.address=:5550"
+      #- "--entrypoints.music-ui.address=:5501"
       - "--entrypoints.grafana.address=:3000"
       - "--entrypoints.jaeger.address=:16686"
       - "--accesslog=true"
       - "--accesslog.filepath=/var/log/access.log"
     ports:
+      - "80:80" # The HTTP port
       - "8080:8080" # Dashboard
-      - "5501:5501" # Music UI
-      - "5550:5550" # Music API
+      #- "5501:5501" # Music UI
+      #- "5550:5550" # Music API
       - "3000:3000" # Grafana
       - "16686:16686" # Jaeger
     volumes:
