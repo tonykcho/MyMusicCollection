@@ -30,10 +30,13 @@ services:
         condition: service_completed_successfully
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.music-api.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.music-api.entrypoints=music-api"
+      #- "traefik.http.routers.music-api.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.music-api.rule=Host(`tonykcho.com`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.music-api.entrypoints=websecure"
       - "traefik.http.services.music-api.loadbalancer.server.port=5550"
       - "traefik.docker.network=music-network"
+      - "traefik.http.routers.music-api.tls=true"
+      - "traefik.http.routers.music-api.tls.certresolver=letsencrypt"
       - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - music-network
@@ -52,6 +55,7 @@ services:
     networks:
       - music-network
     labels:
+      - "traefik.enable=false"
       - "com.centurylinklabs.watchtower.enable=true"
 
   music-ui:
@@ -64,8 +68,11 @@ services:
       - PORT=5501
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.music-ui.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.music-ui.entrypoints=music-ui"
+      - "traefik.http.routers.music-ui.rule=Host(`tonykcho.com`)"
+      # - "traefik.http.routers.music-ui.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.music-ui.entrypoints=websecure"
+      - "traefik.http.routers.music-ui.tls=true"
+      - "traefik.http.routers.music-ui.tls.certresolver=letsencrypt"
       - "traefik.http.services.music-ui.loadbalancer.server.port=5501"
       - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
@@ -79,22 +86,44 @@ services:
       - "--api.dashboard=true"
       - "--providers.docker"
       - "--log.level=DEBUG"
-      - "--entrypoints.music-api.address=:5550"
-      - "--entrypoints.music-ui.address=:5501"
+      # Standard web entrypoints
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+
+      # Custom entrypoints
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      #- "--entrypoints.music-api.address=:5550"
+      #- "--entrypoints.music-ui.address=:5501"
       - "--entrypoints.grafana.address=:3000"
       - "--entrypoints.jaeger.address=:16686"
+
+      # Access log configuration
       - "--accesslog=true"
       - "--accesslog.filepath=/var/log/access.log"
+
+      # Let's Encrypt configuration
+      - "--certificatesResolvers.letsencrypt.acme.email=tonykcho3527657@gmail.com"
+      - "--certificatesResolvers.letsencrypt.acme.storage=/acme.json"
+      - "--certificatesResolvers.letsencrypt.acme.dnsChallenge=true"
+      - "--certificatesResolvers.letsencrypt.acme.dnsChallenge.provider=cloudflare"
+
+      - "--certificatesResolvers.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:5"
     ports:
+      - "80:80" # The HTTP port
+      - "443:443" # The HTTPS port
       - "8080:8080" # Dashboard
-      - "5501:5501" # Music UI
-      - "5550:5550" # Music API
+      # - "5501:5501" # Music UI
+      # - "5550:5550" # Music API
       - "3000:3000" # Grafana
       - "16686:16686" # Jaeger
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - "./traefik-logs:/var/log" # Mount a directory for log files
+      - "./acme.json:/acme.json"
     restart: unless-stopped
+    environment:
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
     networks:
       - music-network
 
