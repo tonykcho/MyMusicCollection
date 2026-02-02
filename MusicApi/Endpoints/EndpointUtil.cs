@@ -17,7 +17,7 @@ public static class EndpointUtil
 
         return result switch
         {
-            FileApiResult fileApiResult => Results.File(fileApiResult.FileData, fileApiResult.ContentType),
+            StreamFileApiResult streamFileApiResult => Results.File(streamFileApiResult.FileStream, streamFileApiResult.ContentType),
             ValidationErrorApiResult validationErrorApiResult => Results.ValidationProblem(validationErrorApiResult.Data),
             NoContentApiResult => Results.NoContent(),
             BadRequestApiResult badRequestApiResult => Results.BadRequest(badRequestApiResult.Message),

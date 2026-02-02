@@ -4,7 +4,7 @@ namespace MusicApi.Services;
 
 public class ImageStorageService
 {
-    public async Task<byte[]> GetImageAsync(string filename)
+    public Stream GetImageStream(string filename)
     {
         var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
         var filePath = Path.Combine(uploadsFolder, filename);
@@ -14,7 +14,7 @@ public class ImageStorageService
             throw new FileNotFoundException("File not found.", filePath);
         }
 
-        return await File.ReadAllBytesAsync(filePath);
+        return new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
     }
 
     public async Task<string> SaveImageAsync(IFormFile file, CancellationToken cancellationToken)

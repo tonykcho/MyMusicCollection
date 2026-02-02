@@ -74,6 +74,7 @@ services:
       - "traefik.http.routers.music-ui.tls=true"
       - "traefik.http.routers.music-ui.tls.certresolver=letsencrypt"
       - "traefik.http.services.music-ui.loadbalancer.server.port=5501"
+      - "traefik.docker.network=music-network"
       - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
     networks:
@@ -108,7 +109,7 @@ services:
       - "--certificatesResolvers.letsencrypt.acme.dnsChallenge=true"
       - "--certificatesResolvers.letsencrypt.acme.dnsChallenge.provider=cloudflare"
 
-      - "--certificatesResolvers.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:5"
+      - "--certificatesResolvers.letsencrypt.acme.dnsChallenge.resolvers=1.1.1.1:53"
     ports:
       - "80:80" # The HTTP port
       - "443:443" # The HTTPS port
@@ -147,5 +148,7 @@ networks:
   music-network:
     name: music-network
     driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
   otlp-network:
     external: true
