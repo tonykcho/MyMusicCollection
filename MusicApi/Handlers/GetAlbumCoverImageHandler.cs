@@ -32,8 +32,8 @@ public class GetAlbumCoverImageHandler : IApiRequestHandler<GetAlbumCoverImageRe
 
         try
         {
-            var imageData = await _imageStorageService.GetImageAsync(album.CoverImagePath);
-            return new FileApiResult(imageData, "image/jpeg"); // Assuming JPEG, adjust as necessary
+            var imageData = _imageStorageService.GetImageStream(album.CoverImagePath);
+            return new StreamFileApiResult(imageData, "image/jpeg"); // Assuming JPEG, adjust as necessary
         }
         catch (FileNotFoundException)
         {
